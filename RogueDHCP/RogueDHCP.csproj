@@ -82,7 +82,6 @@
     <Compile Include="FRMSend.Designer.cs">
       <DependentUpon>FRMSend.cs</DependentUpon>
     </Compile>
-    <Compile Include="IPDetails.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FRMCapture.resx">

@@ -25,21 +25,16 @@ namespace PacketCapture
         CaptureDeviceList devices;
         public static ICaptureDevice device;
         public static string rawPacketData = "";
-        //list of addresses already seen
-        public static List<string> source = new List<string>();
-        public static List<string> destination = new List<string>();
-        public static List<IPDetails> ipDetails = new List<IPDetails>();
         public static List<string> ipList = new List<string>();
-        public static ConcurrentDictionary<IPDetails, int> obsurvedOutboundPackets = new ConcurrentDictionary<IPDetails, int>();
-        public static ConcurrentDictionary<IPDetails, int> obsurvedInboundPackets = new ConcurrentDictionary<IPDetails, int>();
         public static int UDP = 0;
         public static int TCP = 0;
+        //the address of the local box
         public static string localIp;
+        //the mac of the local box
         public static PhysicalAddress localMAC;
         private PcapAddress Address;
         static long numPackets = 0;
         FRMSend fSend;
-        INetFwPolicy2 firewallPolicy = (INetFwPolicy2)Activator.CreateInstance(Type.GetTypeFromProgID("HNetCfg.FwPolicy2"));
 
         public FRMCapture()
         {
@@ -129,9 +124,18 @@ namespace PacketCapture
                         if (i != 31)
                             sourceIp += ".";
                     }
-                    if(!ipList.Contains(sourceIp))
-                        ipList.Add(sourceIp);
-                    Console.WriteLine(sourceIp + " Replied");
+                    for (int i = 38; i <= 41; i++)
+                    {
+                        destinationIp += Convert.ToInt32((rawPacketData[i * 2] + "" + rawPacketData[i * 2 + 1]), 16);
+                        if (i != 41)
+                            destinationIp += ".";
+                    }
+                    if (destinationIp == localIp)
+                    {
+                        if (!ipList.Contains(sourceIp))
+                            ipList.Add(sourceIp);
+                        Console.WriteLine(sourceIp + " Replied");
+                    }
                 }
                 //Console.WriteLine();
             /*
@@ -144,7 +148,7 @@ namespace PacketCapture
                 rawPacketData = "";
         }
         private void updateTable()
-        {            /*
+        {            
             int temp1=dataGridView1.FirstDisplayedScrollingRowIndex;
             ipList.Sort();
             var ips = ipList.ToArray();
@@ -154,7 +158,7 @@ namespace PacketCapture
                 bool temp = dataGridView1.Columns.Contains(ip);
                 dataGridView1.Rows.Add(ip);
             }
-            dataGridView1.FirstDisplayedScrollingRowIndex = temp1;*/
+            dataGridView1.FirstDisplayedScrollingRowIndex = temp1;
         }
         private void btnStartStop_Click(object sender, EventArgs e)
         {
@@ -166,6 +170,7 @@ namespace PacketCapture
                         regDevice();
                         int readTimeoutMilliseconds = 1000;
                         device.Open(DeviceMode.Promiscuous, readTimeoutMilliseconds);
+                        //pull address info for the nic... probably not the best way to do this, but it works so far....
                         Address = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.ipAddress != null && (x.Addr.ipAddress + "").Length <= 15);
                         localMAC = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.hardwareAddress != null).Addr.hardwareAddress;
                         localIp = Address.Addr.ipAddress.ToString();
@@ -229,6 +234,7 @@ namespace PacketCapture
         private void clearScreen()
         {            
             numPackets = 0;
+            ipList.Clear();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -264,17 +270,10 @@ namespace PacketCapture
             }
         }
         private static string selectedIp;
-        void navigateToURL(object path, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(selectedIp);
-        }
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            obsurvedInboundPackets.Clear();
-            obsurvedOutboundPackets.Clear();
-            source.Clear();
-            destination.Clear();
+            ipList.Clear();
         }
 
         public void sendPacket(string bytesToSend)
@@ -321,18 +320,14 @@ namespace PacketCapture
         }
         private void scanNetworkToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
-            ARP(IPAddress.Parse("141.165.208.33"));
+                        
         }
         private List<string> gennerateIPRange()
         {
             List<string> range = new List<string>();
             var netmask = Address.Netmask;
-            //string netmask = "255.255.255.0";
-            //localIp = "141.165.210.77";
             string[] ipparts = localIp.Split('.');
             string[] netparts = netmask.ipAddress.ToString().Split('.');
-            //string[] netparts = netmask.Split('.');
             string ipBinary = "";
             string netBinary = "";
             foreach (string oct in ipparts)
