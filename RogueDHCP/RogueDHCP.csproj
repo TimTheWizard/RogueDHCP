@@ -52,10 +52,10 @@
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PacketDotNet">
-      <HintPath>..\..\NewRepo\RogueDHCP\RogueDHCP\bin\Debug\PacketDotNet.dll</HintPath>
+      <HintPath>..\..\NewRepo\RogueDHCP\RogueDHCP\Pcap\PacketDotNet.dll</HintPath>
     </Reference>
     <Reference Include="SharpPcap">
-      <HintPath>..\..\NewRepo\RogueDHCP\RogueDHCP\bin\Debug\SharpPcap.dll</HintPath>
+      <HintPath>..\..\NewRepo\RogueDHCP\RogueDHCP\Pcap\SharpPcap.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
