@@ -126,27 +126,73 @@ namespace RogueDHCP
             //build the DHCP Discover packet (client to server[Broadcast])
             return new DHCP();
         }
+        public static string ChecksumCalc(params string[] byteChunks)
+        {
+            int sum=0;
+            string checksum = "0000";
+            foreach (var chunk in byteChunks)
+            {
+                if (chunk.Length == 4)
+                    sum += Convert.ToInt32(chunk, 16);
+                else
+                    throw new Exception("Invalid data element length");
+            }
+            checksum = sum.ToString("X4");
+            while (checksum.Length > 4)
+            {
+                sum = Convert.ToInt32(checksum.Substring(checksum.Length-4,4),16);
+                sum += Convert.ToInt32(checksum.Substring(0, checksum.Length - 4), 16);
+                checksum = sum.ToString("X4");
+            }
+            //sum should be the int value of the checksum
+            //take the inverse
+            sum = Convert.ToInt32("FFFF", 16) - sum;
+            checksum = sum.ToString("X4");
+            return checksum;
+        }
+        public static string BuildIPHeader(string id, string ttl ,string protocalType,string serverIp, string destinationIp)
+        {
+            string ipHeader =
+                "4500" +
+                "0156" + //length
+                id + //id ?might need to gen
+                "0000" + //flag
+                ttl +
+                protocalType +
+                "0000" + //checksum need to gen
+                serverIp +
+                destinationIp;
+            var ipHeaderparts = new string[ipHeader.Length / 4];
+            for (int i = 0; i < ipHeader.Length; i++)
+            {
+                ipHeaderparts[i / 4] += ipHeader[i];
+            }
+            //insert checksum
+            ipHeader =
+                ipHeader.Substring(0, ipHeader.Length - 20) +
+                ChecksumCalc(ipHeaderparts) +
+                ipHeader.Substring(ipHeader.Length - 16, 16);
+            return ipHeader;
+        }
         public DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string subnet, string routerIp, string leaseTime="00000e10")
         {
             //build the DHCP Offer packet (server to client[Broadcast])
-            string packet =
-                "ff ff ff ff ff ff" + //destinationMac
+                //ETHERNET HEADER
+            string ethernetHeader =
+                "ffffffffffff" + //destinationMac
                 serverMAC +//98 90 96 D1 BF FC  //sourceMAc
-                "0800" +//IPv4
-                "4500" +
-                "0156" + //length
-                "0FDF" + //id ?might need to gen
-                "0000" + //flag
-                "FF" +//ttl
-                "11" +//udp
-                "4D11" + //checksum need to gen
-                serverIp +//source ip
-                "FFFFFFFF" + //destination ip(broadcsat)
+                "0800";//IPv4
+            //IP HEADER
+            string ipHeader = BuildIPHeader("0FDF", "FF", "11", serverIp, "FFFFFFFF");
+            //UDP HEADER
+            string udpHeader =
                 "0043" + //source port
                 "0044" + //destination port
                 "0142" + //length need to check?
-                "43E4" + //checksum ned to gen
-                "02 01 06" + //type, ethernet, mac length
+                "43E4"; //checksum ned to gen
+            //PAYLOAD
+            string bootP=
+                "020106" + //type, ethernet, mac length
                 "01" + //hops 
                 transId +//trans id
                 "0000" + //sec elapsed
