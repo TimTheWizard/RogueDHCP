@@ -50,6 +50,42 @@ namespace PacketCapture
                 cmbDevices.Items.Add(dev.Description);
             }
         }
+        public static string ConvertIpToHex(string ip)
+        {
+            string[] parts = ip.Split('.');
+            int[] intParts = new int[4];
+            string[] macAddress = new string[4];
+            if (parts.Length == 4)
+            {
+                bool valid = true;
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    valid = valid && Int32.TryParse(parts[i], out intParts[i]);
+                    if (valid)
+                    {
+                        valid = (intParts[i] <= 255 && intParts[i] >= 0);
+                    }
+                    if (valid)
+                    {
+                        macAddress[i] = intParts[i].ToString("X");
+                        if (macAddress[i].Length < 2)
+                        {
+                            macAddress[i] = "0" + macAddress[i];
+                        }
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                if (valid)
+                {
+                    return macAddress[0] + macAddress[1] + macAddress[2] + macAddress[3];
+                }
+                return "ERROR";
+            }
+            return "ERROR";
+        }
         private static void device_OnPacketArrival(object sender, CaptureEventArgs args) {
             
                 byte[] data = args.Packet.Data;
