@@ -126,9 +126,50 @@ namespace RogueDHCP
             //build the DHCP Discover packet (client to server[Broadcast])
             return new DHCP();
         }
-        public DHCP DHCPOffer()
+        public DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string subnet, string routerIp, string leaseTime="00000e10")
         {
             //build the DHCP Offer packet (server to client[Broadcast])
+            string packet =
+                "ff ff ff ff ff ff" + //destinationMac
+                serverMAC +//98 90 96 D1 BF FC  //sourceMAc
+                "0800" +//IPv4
+                "4500" +
+                "0156" + //length
+                "0FDF" + //id ?might need to gen
+                "0000" + //flag
+                "FF" +//ttl
+                "11" +//udp
+                "4D11" + //checksum need to gen
+                serverIp +//source ip
+                "FFFFFFFF" + //destination ip(broadcsat)
+                "0043" + //source port
+                "0044" + //destination port
+                "0142" + //length need to check?
+                "43E4" + //checksum ned to gen
+                "02 01 06" + //type, ethernet, mac length
+                "01" + //hops 
+                transId +//trans id
+                "0000" + //sec elapsed
+                "8000" + //bootp flag
+                "00000000" + //client ip
+                offeredIp + //offered ip
+                "00000000" + //next server ip
+                "00000000" + //relay agent
+                serverMAC + //client mac
+                //server host name
+                "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+                //boot file
+                "5c534d53426f6f745c7836345c7764736e62702e636F6D000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+                "63825363" +//magic cookie
+                "350102" +//DHCP Offer
+                "3604" + serverIp + //dhcp server identifire
+                "3304" + leaseTime + //ip lease time
+                "0104" + subnet + //subnet
+                "0F1367656F72676961736F75746865726E2E656475" +//domain name
+                "0304" + routerIp + //router
+                "0604"+routerIp+ //88DA506068DA50109" + //domain name server
+                "FF"; //end
+
             return new DHCP();
         }
         public DHCP DHCPRequest()
