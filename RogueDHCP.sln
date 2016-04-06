@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RogueDHCP", "RogueDHCP\RogueDHCP.csproj", "{052398C9-189B-44E0-95D6-B86DDB6B9046}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{46097027-E11E-416D-BE51-9F9AF3DAECCF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{052398C9-189B-44E0-95D6-B86DDB6B9046}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{052398C9-189B-44E0-95D6-B86DDB6B9046}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{052398C9-189B-44E0-95D6-B86DDB6B9046}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46097027-E11E-416D-BE51-9F9AF3DAECCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46097027-E11E-416D-BE51-9F9AF3DAECCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46097027-E11E-416D-BE51-9F9AF3DAECCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46097027-E11E-416D-BE51-9F9AF3DAECCF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

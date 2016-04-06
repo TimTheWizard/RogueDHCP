@@ -109,7 +109,7 @@ namespace RogueDHCP
         ff                       #End option
         }            
     */
-    class DHCP
+    public class DHCP
     {
         private string rawPacketText;
         private byte[] packet;
@@ -126,13 +126,17 @@ namespace RogueDHCP
             //build the DHCP Discover packet (client to server[Broadcast])
             return new DHCP();
         }
+        public static bool OnlyHexInString(string test)
+        {
+            return System.Text.RegularExpressions.Regex.IsMatch(test, @"\A\b[0-9a-fA-F]+\b\Z");
+        }
         public static string ChecksumCalc(params string[] byteChunks)
         {
             int sum=0;
             string checksum = "0000";
             foreach (var chunk in byteChunks)
             {
-                if (chunk.Length == 4)
+                if (chunk.Length == 4 && OnlyHexInString(chunk))
                     sum += Convert.ToInt32(chunk, 16);
                 else
                     throw new Exception("Invalid data element length");
@@ -150,8 +154,32 @@ namespace RogueDHCP
             checksum = sum.ToString("X4");
             return checksum;
         }
-        public static string BuildIPHeader(string id, string ttl ,string protocalType,string serverIp, string destinationIp)
+        private static string BuildIPHeader(string id, string ttl ,string protocalType,string serverIp, string destinationIp)
         {
+            //validate for ipv4
+            if (serverIp.Length != 8 && OnlyHexInString(serverIp))
+                throw new Exception("Invalid Source IP (Must be Hex IPv4)");
+            if (destinationIp.Length != 8 && OnlyHexInString(destinationIp))
+                throw new Exception("Invalid Destination IP (Must be Hex IPv4)");
+            if (!OnlyHexInString(id))
+                throw new Exception("Invalid ID (Must be Hex)");
+            if (!OnlyHexInString(ttl))
+                throw new Exception("Invalid Time To Live (Must be Hex)");
+            if (!OnlyHexInString(protocalType))
+                throw new Exception("Invalid Protocal Type (Must be Hex)");
+            if (id.Length > 4)
+                id.Substring(0, 4);
+            while(id.Length < 4)
+                id += "0";
+            if (ttl.Length > 2)
+                ttl.Substring(0, 2);
+            while (ttl.Length < 2)
+                ttl += "0";
+            if (protocalType.Length > 2)
+                protocalType.Substring(0, 2);
+            while (protocalType.Length < 2)
+                protocalType += "0";
+            //actual work
             string ipHeader =
                 "4500" +
                 "0156" + //length
@@ -174,7 +202,7 @@ namespace RogueDHCP
                 ipHeader.Substring(ipHeader.Length - 16, 16);
             return ipHeader;
         }
-        public DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string subnet, string routerIp, string leaseTime="00000e10")
+        public static DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime="00000e10")
         {
             //build the DHCP Offer packet (server to client[Broadcast])
                 //ETHERNET HEADER
@@ -201,7 +229,7 @@ namespace RogueDHCP
                 offeredIp + //offered ip
                 "00000000" + //next server ip
                 "00000000" + //relay agent
-                serverMAC + //client mac
+                clientMac + //client mac
                 //server host name
                 "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
                 //boot file
@@ -215,8 +243,14 @@ namespace RogueDHCP
                 "0304" + routerIp + //router
                 "0604"+routerIp+ //88DA506068DA50109" + //domain name server
                 "FF"; //end
-
-            return new DHCP();
+            string offer = ethernetHeader + ipHeader + udpHeader + bootP;
+            //convert offer to byteStream
+            byte[] packetData = new byte[offer.Length / 2];
+            for (int i = 0; i < offer.Length; i+=2)
+            {
+                packetData[i / 2] = Convert.ToByte(offer.Substring(i,2), 16);
+            }
+            return new DHCP() { packet = packetData };
         }
         public DHCP DHCPRequest()
         {
