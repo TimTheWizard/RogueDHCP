@@ -205,21 +205,8 @@ namespace RogueDHCP
         public static DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime="00000e10")
         {
             //build the DHCP Offer packet (server to client[Broadcast])
-                //ETHERNET HEADER
-            string ethernetHeader =
-                "ffffffffffff" + //destinationMac
-                serverMAC +//98 90 96 D1 BF FC  //sourceMAc
-                "0800";//IPv4
-            //IP HEADER
-            string ipHeader = BuildIPHeader("0FDF", "FF", "11", serverIp, "FFFFFFFF");
-            //UDP HEADER
-            string udpHeader =
-                "0043" + //source port
-                "0044" + //destination port
-                "0142" + //length need to check?
-                "43E4"; //checksum ned to gen
             //PAYLOAD
-            string bootP=
+            string bootP =
                 "020106" + //type, ethernet, mac length
                 "01" + //hops 
                 transId +//trans id
@@ -241,8 +228,22 @@ namespace RogueDHCP
                 "0104" + subnet + //subnet
                 "0F1367656F72676961736F75746865726E2E656475" +//domain name
                 "0304" + routerIp + //router
-                "0604"+routerIp+ //88DA506068DA50109" + //domain name server
+                "0604" + routerIp + //88DA506068DA50109" + //domain name server
                 "FF"; //end
+            //UDP HEADER
+            string udpHeader =
+                "0043" + //source port
+                "0044" + //destination port
+                ((bootP.Length + 16) / 2).ToString("X4") + //length as a 4 digit hex value
+                "43E4"; //checksum ned to gen
+            //ETHERNET HEADER
+            string ethernetHeader =
+                "ffffffffffff" + //destinationMac
+                serverMAC +//98 90 96 D1 BF FC  //sourceMAc
+                "0800";//IPv4
+            //IP HEADER
+            string ipHeader = BuildIPHeader("0FDF", "FF", "11", serverIp, "FFFFFFFF");
+            
             string offer = ethernetHeader + ipHeader + udpHeader + bootP;
             //convert offer to byteStream
             byte[] packetData = new byte[offer.Length / 2];
