@@ -259,9 +259,55 @@ namespace RogueDHCP
             //build the DHCP Request packet (client to server[Brodcast])
             return new DHCP();
         }
-        public DHCP DHCPACK()
+        public DHCP DHCPACK(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime = "00000e10")
         {
             //build the DHCP ACK packet (server to client)
+            string bootP =
+                "020106" +    //boot reply, Ethernet
+                "02" +        //hops
+                transId + //trans id
+                "0000" +      //seconds
+                "8000" +     //boot flag
+                "00000000" + //client ip
+                offeredIp + //offer ip (the offered ip for ACK)
+                serverIp + //next server ip (ip of dhcp)
+                routerIp + //relay agent (router?)
+                clientMac + //Client MAC
+                    ///Shit Padding
+                "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+                "63825363" + //magic cookie
+                "350105" + //op Message Length 1 (06) ACK(05)
+                "3604"+serverIp + //op dhcp id Length (04)  dhcp ip
+                "3304"+leaseTime + //ip lease time
+                "0104"+subnet + //subnet mask
+                "0f13 67656f72676961736f75746865726e2e656475" + //domain name
+                "0304"+ routerIp + //router ip
+                "0608 8da506068da50109" + //dns (actual 2 addresses 8da50606 8da50109)
+                "2b0d 3134312e3136352e3130342e32" + //vendor shit
+                "ff"; //end and padding
+            return new DHCP();
+        }
+        public DHCP DHCPNACK(string serverMAC, string serverIp, string transId, string clientMac, string subnet, string routerIp, string leaseTime = "00000e10")
+        {
+            //build the DHCP ACK packet (server to client)
+            string bootP =
+                "020106" +    //boot reply, Ethernet
+                "02" +        //hops
+                transId + //trans id
+                "0000" +      //seconds
+                "8000" +     //boot flag
+                "00000000" + //client ip
+                "00000000" + //offer ip (should be zip for NACK)
+                serverIp + //next server ip (ip of dhcp)
+                routerIp + //relay agent (router?)
+                clientMac + //Client MAC
+                ///Shit Padding
+                "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+                "63825363" + //magic cookie
+                "350106" + //op Message Length 1 (06) NACK(06)
+                "3604" + serverIp + //op dhcp id Length (04)  dhcp ip
+                "381f7265717565737465642061646472657373206e6f7420617661696c61626c65" + //Message Length (1f=31)
+                "ff"; //end and padding
             return new DHCP();
         }
         public DHCP DHCPRelease()
