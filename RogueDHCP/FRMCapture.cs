@@ -91,13 +91,20 @@ namespace PacketCapture
         private static void device_OnPacketArrival(object sender, CaptureEventArgs args) {
             
                 byte[] data = args.Packet.Data;
+                string thing = "";
+                var test ="ffffffffffff00aabbccde0208004500012f000240008011f9bc00000000ffffffff00440043011bf79a0101060000000332000480000000000000000000000000000000000000aabbccde0200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000638253633501013d070100aabbccde020c0c57495a6e657443434445303237060103060f3a3bff";
                 int byteCounter = 0;
                 foreach (byte b in data)
                 {
                     byteCounter++;
                     //add byte to sting in hex
                     rawPacketData += b.ToString("X2");
+                    thing+= b.ToString("X2");
                 }
+            if(thing==test || thing.Contains(test))
+            {
+
+            }
                 //MAC
                 //first 8 are destination
                 //second 8 are source
@@ -137,6 +144,18 @@ namespace PacketCapture
                 //Console.WriteLine();
                 if (type == "(IP)")
                 {
+                    //is it udp (11)
+                    if (rawPacketData[23 * 2].ToString() + rawPacketData[23 * 2 + 1].ToString() == "11" && rawPacketData.Length > 282 * 2)
+                    {
+                        //check for magic cookie
+                        if ("63825363"==rawPacketData[278 * 2].ToString() + rawPacketData[278 * 2 + 1].ToString() 
+                            + rawPacketData[279 * 2].ToString() + rawPacketData[279 * 2 + 1].ToString() 
+                            + rawPacketData[280 * 2].ToString() + rawPacketData[280 * 2 + 1].ToString() 
+                            + rawPacketData[281 * 2].ToString() + rawPacketData[281 * 2 + 1].ToString())
+                        {
+                            //we have a DHP packet.... we need tp parse it
+                        }
+                    }
                     //get source ip
                     for (int i = 26; i <= 29; i++)
                     {
