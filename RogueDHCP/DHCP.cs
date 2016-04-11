@@ -113,7 +113,13 @@ namespace RogueDHCP
     {
         private string rawPacketText;
         private byte[] packet;
-        private string senderIp, targetIp, senderMAC, targetMAC;
+        private string senderIp = "0000";
+        private string targetIp = "0000";
+        private string offeredIp = "0000";
+        private string senderMAC = "000000000000";
+        private string targetMAC = "000000000000";
+        private string transactionId = "00000000";
+        private string timeToLive = "FF";
 
         public byte[] GetPacket()
         {
@@ -154,7 +160,7 @@ namespace RogueDHCP
             checksum = sum.ToString("X4");
             return checksum;
         }
-        private static string BuildIPHeader(string id, string ttl ,string protocalType,string serverIp, string destinationIp, int length=0)
+        private static string BuildIPHeader(string id, string ttl ,string protocalType, string serverIp, string destinationIp, int length=0)
         {
             //validate for ipv4
             if (serverIp.Length != 8 && OnlyHexInString(serverIp))
