@@ -26,6 +26,8 @@ namespace PacketCapture
         public static ICaptureDevice device;
         public static string rawPacketData = "";
         public static List<string> ipList = new List<string>();
+        public static List<string> possibleAddresses = new List<string>();
+        private static bool DHCPisActive = false;
         public static int UDP = 0;
         public static int TCP = 0;
         //the address of the local box
@@ -91,20 +93,13 @@ namespace PacketCapture
         private static void device_OnPacketArrival(object sender, CaptureEventArgs args) {
             
                 byte[] data = args.Packet.Data;
-                string thing = "";
-                var test ="ffffffffffff00aabbccde0208004500012f000240008011f9bc00000000ffffffff00440043011bf79a0101060000000332000480000000000000000000000000000000000000aabbccde0200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000638253633501013d070100aabbccde020c0c57495a6e657443434445303237060103060f3a3bff";
                 int byteCounter = 0;
                 foreach (byte b in data)
                 {
                     byteCounter++;
                     //add byte to sting in hex
                     rawPacketData += b.ToString("X2");
-                    thing+= b.ToString("X2");
                 }
-            if(thing==test || thing.Contains(test))
-            {
-
-            }
                 //MAC
                 //first 8 are destination
                 //second 8 are source
@@ -148,7 +143,7 @@ namespace PacketCapture
                     if (rawPacketData[23 * 2].ToString() + rawPacketData[23 * 2 + 1].ToString() == "11" && rawPacketData.Length > 282 * 2)
                     {
                         //check for magic cookie
-                        if ("63825363"==rawPacketData[278 * 2].ToString() + rawPacketData[278 * 2 + 1].ToString() 
+                        if (DHCPisActive && "63825363"==rawPacketData[278 * 2].ToString() + rawPacketData[278 * 2 + 1].ToString() 
                             + rawPacketData[279 * 2].ToString() + rawPacketData[279 * 2 + 1].ToString() 
                             + rawPacketData[280 * 2].ToString() + rawPacketData[280 * 2 + 1].ToString() 
                             + rawPacketData[281 * 2].ToString() + rawPacketData[281 * 2 + 1].ToString())
@@ -161,6 +156,17 @@ namespace PacketCapture
                                 {
                                     case "01":
                                         //DHCP Discover
+                                        RogueDHCP.DHCP dhcp = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), "00000e10", FRMCapture.ConvertIpToHex(subnet), FRMCapture.ConvertIpToHex(gateway));
+                                        dhcp.DHCPDiscover(rawPacketData);
+                                        string requestedIp;// = dhcp.getOptionData("35");
+                                        if (dhcp.TryGetOption("32", out requestedIp))
+                                        {
+                                            device.SendPacket(dhcp.DHCPOffer(requestedIp).GetPacket());
+                                        }
+                                        else
+                                        {
+                                            device.SendPacket(dhcp.DHCPOffer(ConvertIpToHex(possibleAddresses.First())).GetPacket());
+                                        }
                                         break;
                                     case "02":
                                         //DHCP Offer
@@ -224,7 +230,10 @@ namespace PacketCapture
                     if (destinationIp == localIp)
                     {
                         if (!ipList.Contains(sourceIp))
+                        {
                             ipList.Add(sourceIp);
+                            possibleAddresses.Remove(sourceIp);
+                        }
                         Console.WriteLine(sourceIp + " Replied");
                     }
                 }
@@ -506,7 +515,8 @@ namespace PacketCapture
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            var list = gennerateIPRange();
+            possibleAddresses = gennerateIPRange();
+            var list = possibleAddresses.ToArray();
             List<Task<PingReply>> pingTasks = new List<Task<PingReply>>();
             foreach (var address in list)
             {
@@ -516,11 +526,26 @@ namespace PacketCapture
 
         private void aRPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var list = gennerateIPRange();
+            possibleAddresses = gennerateIPRange();
+            var list = possibleAddresses.ToArray();
             List<Task<string>> arpTasks = new List<Task<string>>();
             foreach (var address in list)
             {
                 arpTasks.Add(ARPAsync(address));
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (DHCPisActive)
+            {
+                button1.Text = "Turn on DHCP";
+                DHCPisActive = false;
+            }
+            else
+            {
+                button1.Text = "Turn off DHCP";
+                DHCPisActive = true;
             }
         }
     }

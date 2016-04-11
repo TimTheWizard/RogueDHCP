@@ -72,7 +72,9 @@ namespace PacketCapture
              * */
             try
             {
-                RogueDHCP.DHCP offer = RogueDHCP.DHCP.DHCPACK(FRMCapture.localMAC.ToString(), FRMCapture.ConvertIpToHex(FRMCapture.localIp), "33553355", FRMCapture.ConvertIpToHex("192.168.200.200"), FRMCapture.localMAC.ToString(), FRMCapture.ConvertIpToHex(FRMCapture.subnet), FRMCapture.ConvertIpToHex(FRMCapture.gateway), "00000e10", FRMCapture.ConvertIpToHex(FRMCapture.gateway));
+                RogueDHCP.DHCP offer = RogueDHCP.DHCP.DHCPOffer("D8CB8A61FCEB", "8DA5D5CD", "28A1475F", "00000000", "D8CB8A61FCEB", "FFFFF800", "8DA5D001", "00000e10", "08080808", "08080606");
+                //RogueDHCP.DHCP offer = RogueDHCP.DHCP.DHCPOffer(FRMCapture.localMAC.ToString(), FRMCapture.ConvertIpToHex(FRMCapture.localIp), "33553355", FRMCapture.ConvertIpToHex("192.168.200.200"), FRMCapture.localMAC.ToString(), FRMCapture.ConvertIpToHex(FRMCapture.subnet), FRMCapture.ConvertIpToHex(FRMCapture.gateway), "00000e10", FRMCapture.ConvertIpToHex(FRMCapture.gateway));
+                //RogueDHCP.DHCP offer = RogueDHCP.DHCP.DHCPACK(FRMCapture.localMAC.ToString(), FRMCapture.ConvertIpToHex(FRMCapture.localIp), "33553355", FRMCapture.ConvertIpToHex("192.168.200.200"), FRMCapture.localMAC.ToString(), FRMCapture.ConvertIpToHex(FRMCapture.subnet), FRMCapture.ConvertIpToHex(FRMCapture.gateway), "00000e10", FRMCapture.ConvertIpToHex(FRMCapture.gateway));
                 //RogueDHCP.DHCP offer = RogueDHCP.DHCP.DHCPNACK(FRMCapture.localMAC.ToString(), FRMCapture.ConvertIpToHex(FRMCapture.localIp), "33553355", FRMCapture.localMAC.ToString(), FRMCapture.ConvertIpToHex("192.168.200.200"), FRMCapture.ConvertIpToHex(FRMCapture.gateway), "00000e10");
                 FRMCapture.device.SendPacket(offer.GetPacket());
             }

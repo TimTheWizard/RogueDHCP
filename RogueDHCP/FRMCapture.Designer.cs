@@ -47,6 +47,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.IP = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button1 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -137,7 +138,7 @@
             // sendWindowToolStripMenuItem
             // 
             this.sendWindowToolStripMenuItem.Name = "sendWindowToolStripMenuItem";
-            this.sendWindowToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.sendWindowToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.sendWindowToolStripMenuItem.Text = "&Send Window";
             this.sendWindowToolStripMenuItem.Click += new System.EventHandler(this.sendWindowToolStripMenuItem_Click);
             // 
@@ -147,21 +148,21 @@
             this.toolStripMenuItem1,
             this.aRPToolStripMenuItem});
             this.scanNetworkToolStripMenuItem.Name = "scanNetworkToolStripMenuItem";
-            this.scanNetworkToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.scanNetworkToolStripMenuItem.Size = new System.Drawing.Size(147, 22);
             this.scanNetworkToolStripMenuItem.Text = "Scan Network";
             this.scanNetworkToolStripMenuItem.Click += new System.EventHandler(this.scanNetworkToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(98, 22);
             this.toolStripMenuItem1.Text = "Ping";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // aRPToolStripMenuItem
             // 
             this.aRPToolStripMenuItem.Name = "aRPToolStripMenuItem";
-            this.aRPToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aRPToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
             this.aRPToolStripMenuItem.Text = "ARP";
             this.aRPToolStripMenuItem.Click += new System.EventHandler(this.aRPToolStripMenuItem_Click);
             // 
@@ -186,11 +187,22 @@
             this.IP.HeaderText = "IP";
             this.IP.Name = "IP";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(13, 34);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(94, 23);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Turn on DHCP";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // FRMCapture
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(317, 508);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.cmbDevices);
             this.Controls.Add(this.btnStartStop);
@@ -226,6 +238,7 @@
         private System.Windows.Forms.ToolStripMenuItem scanNetworkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem aRPToolStripMenuItem;
+        private System.Windows.Forms.Button button1;
     }
 }
 

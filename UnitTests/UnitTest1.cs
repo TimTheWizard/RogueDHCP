@@ -17,7 +17,7 @@ namespace UnitTests
         {
             try
             {
-                DHCP dhcp = DHCP.DHCPOffer("989096D1BFFC", "8DA5D001", "33553355", "8DA5D54F", "D8CB8A61FCEB", "FFFFF800", "8DA5D001");
+                DHCP dhcp = null;//DHCP.DHCPOffer("989096D1BFFC", "8DA5D001", "33553355", "8DA5D54F", "D8CB8A61FCEB", "FFFFF800", "8DA5D001");
                 var data=dhcp.GetPacket();
                 Assert.IsNotNull(data);
                 string dataString="";

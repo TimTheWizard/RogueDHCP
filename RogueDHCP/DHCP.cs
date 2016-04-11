@@ -111,26 +111,85 @@ namespace RogueDHCP
     */
     public class DHCP
     {
-        private string rawPacketText;
+        public string rawPacketText;
         private byte[] packet;
-        private string senderIp = "0000";
-        private string targetIp = "0000";
-        private string offeredIp = "0000";
+        private string senderIp = "00000000";
+        private string targetIp = "00000000";
+        public string offeredIp = "00000000";
         private string senderMAC = "000000000000";
         private string targetMAC = "000000000000";
         private string transactionId = "00000000";
         private string timeToLive = "FF";
 
+        private string subnet = "FFFFFF00";
+        private string routerIp = "00000000";
+        private string dns1 = "08080808";
+        private string dns2 = "08080404";
+
+        private Dictionary<string, string> options = new Dictionary<string, string>();
+
         public byte[] GetPacket()
         {
             return packet;
         }
+        public DHCP(string localIp, string serverMAC, string ttl, string sub, string router)
+        {
+            senderIp = localIp;
+            senderMAC = serverMAC;
+            timeToLive = ttl;
+            subnet = sub;
+            routerIp = router;
+        }
+
+        public DHCP(){}
+        //pull out the options in the data
+        private void parseOptions(string rawPacketData)
+        {
+            string optionData;
+            if ("63825363" == rawPacketData[278 * 2].ToString() + rawPacketData[278 * 2 + 1].ToString()
+                            + rawPacketData[279 * 2].ToString() + rawPacketData[279 * 2 + 1].ToString()
+                            + rawPacketData[280 * 2].ToString() + rawPacketData[280 * 2 + 1].ToString()
+                            + rawPacketData[281 * 2].ToString() + rawPacketData[281 * 2 + 1].ToString())
+            {
+                optionData = rawPacketData.Substring(282 * 2, rawPacketData.LastIndexOf("FF") - 282 * 2);
+                int i = 0;
+                while (i < optionData.Length)
+                {
+                    string key, length, data="";
+                    //get the key
+                    key = optionData[i].ToString() + optionData[++i].ToString();
+                    if (key == "00")
+                        break;
+                    //get the length
+                    length = optionData[++i].ToString() + optionData[++i].ToString();
+                    for(int l = 0;l<Convert.ToInt32(length, 16)*2; l++)
+                    {
+                        data += optionData[++i];
+                    }
+                    options.Add(key, data);
+                    i++;
+                }
+            }
+        }
         //when building, beware checksums
-        public DHCP DHCPDiscover()
+        public Dictionary<string, string> DHCPDiscover(string packet)
         {
             //MIGHT NOT NEED TO BUILD BUT DO NEED TO READ
             //build the DHCP Discover packet (client to server[Broadcast])
-            return new DHCP();
+            targetMAC = "";
+            for (int i = 6; i < 12; i++)
+                targetMAC += packet[i * 2] + "" + packet[i * 2 + 1];
+
+            string claimedMAC = "";
+            for (int i = 70; i < 76; i++)
+                claimedMAC += packet[i * 2] + "" + packet[i * 2 + 1];
+            if (targetMAC != claimedMAC)
+                throw new Exception("Spoofed or invalid MAC");
+            transactionId = "";
+            for (int i = 46; i < 50; i++)
+                transactionId += packet[i * 2] + "" + packet[i * 2 + 1];
+            parseOptions(packet);
+            return this.options;
         }
         public static bool OnlyHexInString(string test)
         {
@@ -208,6 +267,11 @@ namespace RogueDHCP
                 ipHeader.Substring(ipHeader.Length - 16, 16);
             return ipHeader;
         }
+        public DHCP DHCPOffer(string _offeredIp)
+        {
+            var offer = DHCP.DHCPOffer(this.senderMAC, this.senderIp, this.transactionId, _offeredIp, this.targetMAC, this.subnet, this.routerIp, this.timeToLive, this.dns1, this.dns2);
+            return offer;
+        }
         public static DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime, params string[] dns)
         {
             //build the DHCP Offer packet (server to client[Broadcast])
@@ -264,7 +328,7 @@ namespace RogueDHCP
             {
                 packetData[i / 2] = Convert.ToByte(offer.Substring(i,2), 16);
             }
-            return new DHCP() { packet = packetData };
+            return new DHCP() { packet = packetData, rawPacketText=offer };
         }
         public DHCP DHCPRequest()
         {
@@ -379,5 +443,21 @@ namespace RogueDHCP
             return new DHCP();
         }
         //do we want to worry about DHCP Information
+
+        public bool HasOption(string key)
+        {
+            return options.Keys.Contains(key);
+        }
+        public bool TryGetOption(string key, out string data)
+        {
+            return options.TryGetValue(key, out data);
+        }
+        public string getOptionData(string key){
+            string data;
+            if (options.TryGetValue(key, out data))
+                return data;
+            else
+                return "ERROR";
+        }
     }
 }
