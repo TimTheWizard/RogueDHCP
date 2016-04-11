@@ -443,6 +443,10 @@ namespace PacketCapture
         private List<string> gennerateIPRange()
         {
             List<string> range = new List<string>();
+            if(Address==null)
+            {
+                throw new Exception("No address (is NIC selected?)");
+            }
             var netmask = Address.Netmask;
             string[] ipparts = localIp.Split('.');
             string[] netparts = netmask.ipAddress.ToString().Split('.');
@@ -515,23 +519,37 @@ namespace PacketCapture
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            possibleAddresses = gennerateIPRange();
-            var list = possibleAddresses.ToArray();
-            List<Task<PingReply>> pingTasks = new List<Task<PingReply>>();
-            foreach (var address in list)
+            try
             {
-                pingTasks.Add(PingAsync(address));
+                possibleAddresses = gennerateIPRange();
+                var list = possibleAddresses.ToArray();
+                List<Task<PingReply>> pingTasks = new List<Task<PingReply>>();
+                foreach (var address in list)
+                {
+                    pingTasks.Add(PingAsync(address));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void aRPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            possibleAddresses = gennerateIPRange();
-            var list = possibleAddresses.ToArray();
-            List<Task<string>> arpTasks = new List<Task<string>>();
-            foreach (var address in list)
+            try
             {
-                arpTasks.Add(ARPAsync(address));
+                possibleAddresses = gennerateIPRange();
+                var list = possibleAddresses.ToArray();
+                List<Task<string>> arpTasks = new List<Task<string>>();
+                foreach (var address in list)
+                {
+                    arpTasks.Add(ARPAsync(address));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
