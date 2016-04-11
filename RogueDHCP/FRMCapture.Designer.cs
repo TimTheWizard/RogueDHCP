@@ -210,6 +210,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FRMCapture";
             this.Text = "Capture";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FRMCapture_FormClosed);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();

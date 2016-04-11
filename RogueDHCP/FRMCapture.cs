@@ -90,6 +90,14 @@ namespace PacketCapture
             }
             return "ERROR";
         }
+        public static string ConvertHexIpToStandard(string ip)
+        {
+            if (ip.Length < 8)
+            {
+                throw new Exception("Invalid IP to convert to Hex");
+            }
+            return Convert.ToInt32(ip.Substring(0, 2), 16) + "." + Convert.ToInt32(ip.Substring(2, 2), 16) + "." + Convert.ToInt32(ip.Substring(4, 2), 16) + "." + Convert.ToInt32(ip.Substring(6, 2), 16);
+        }
         private static void device_OnPacketArrival(object sender, CaptureEventArgs args) {
             
                 byte[] data = args.Packet.Data;
@@ -158,8 +166,9 @@ namespace PacketCapture
                                         //DHCP Discover
                                         RogueDHCP.DHCP dhcp = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), "00000e10", FRMCapture.ConvertIpToHex(subnet), FRMCapture.ConvertIpToHex(gateway));
                                         dhcp.DHCPDiscover(rawPacketData);
-                                        string requestedIp;// = dhcp.getOptionData("35");
-                                        if (dhcp.TryGetOption("32", out requestedIp))
+                                        //check to see if they requested an IP address, if so, try and give it to them
+                                        string requestedIp;
+                                        if (dhcp.TryGetOption("32", out requestedIp) && !possibleAddresses.Contains(ConvertHexIpToStandard(requestedIp)))
                                         {
                                             device.SendPacket(dhcp.DHCPOffer(requestedIp).GetPacket());
                                         }
@@ -565,6 +574,11 @@ namespace PacketCapture
                 button1.Text = "Turn off DHCP";
                 DHCPisActive = true;
             }
+        }
+
+        private void FRMCapture_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            device.Close();
         }
     }
 }
