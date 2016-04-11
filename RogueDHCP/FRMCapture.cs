@@ -154,6 +154,40 @@ namespace PacketCapture
                             + rawPacketData[281 * 2].ToString() + rawPacketData[281 * 2 + 1].ToString())
                         {
                             //we have a DHP packet.... we need tp parse it
+                            //might be a bad assumption, but its option 53 (35 in hex) and it is usualy the first one after the magic cookie
+                            if (rawPacketData[282 * 2].ToString() + rawPacketData[282 * 2 + 1].ToString() == "35")
+                            {
+                                switch (rawPacketData[284 * 2].ToString() + rawPacketData[284 * 2 + 1].ToString())
+                                {
+                                    case "01":
+                                        //DHCP Discover
+                                        break;
+                                    case "02":
+                                        //DHCP Offer
+                                        break;
+                                    case "03":
+                                        //DHCP Request
+                                        break;
+                                    case "04":
+                                        //DHCP Decline
+                                        break;
+                                    case "05":
+                                        //DHCP ACK (server-side, will probably ignore [May want to scrape to know what address was assigned so we know not to assign and how long it was assigned)
+                                        break;
+                                    case "06":
+                                        //DHCP NACK (server-side, will probably ignore)
+                                        break;
+                                    case "07":
+                                        //DHCP Release
+                                        break;
+                                    case "08":
+                                        //DHCP Inform
+                                        break;
+                                    default:
+                                        MessageBox.Show("Unknown dhcp packet");
+                                        break;
+                                }
+                            }
                         }
                     }
                     //get source ip
