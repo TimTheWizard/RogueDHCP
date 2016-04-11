@@ -31,7 +31,7 @@ namespace PacketCapture
         //the address of the local box
         public static string localIp;
         public static string subnet;
-        public static string gateway;
+        public static string gateway="0.0.0.0";
         //the mac of the local box
         public static PhysicalAddress localMAC;
         private PcapAddress Address;
@@ -214,11 +214,20 @@ namespace PacketCapture
                         localMAC = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.hardwareAddress != null).Addr.hardwareAddress;
                         localIp = Address.Addr.ipAddress.ToString();
 
-                        
-                        var ipProperties = NetworkInterface.GetAllNetworkInterfaces().First().GetIPProperties();
-                        if (ipProperties.UnicastAddresses.First().Address.ToString() == localIp)
-                            gateway = ipProperties.GatewayAddresses.First().Address.ToString();
-                        else
+                        var devices = NetworkInterface.GetAllNetworkInterfaces();
+                        foreach (var nic in devices)
+                        {
+                            if (gateway == "0.0.0.0")
+                            foreach (var addressProperties in nic.GetIPProperties().UnicastAddresses)
+                            {
+                                if (addressProperties.Address.ToString() == localIp)
+                                {
+                                    gateway = nic.GetIPProperties().GatewayAddresses.First().Address.ToString();
+                                    break;
+                                }
+                            }
+                        }
+                        if (gateway=="0.0.0.0")
                             MessageBox.Show("Error extracting Gateway Address");
 
 

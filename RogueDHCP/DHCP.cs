@@ -154,7 +154,7 @@ namespace RogueDHCP
             checksum = sum.ToString("X4");
             return checksum;
         }
-        private static string BuildIPHeader(string id, string ttl ,string protocalType,string serverIp, string destinationIp)
+        private static string BuildIPHeader(string id, string ttl ,string protocalType,string serverIp, string destinationIp, int length=0)
         {
             //validate for ipv4
             if (serverIp.Length != 8 && OnlyHexInString(serverIp))
@@ -182,7 +182,7 @@ namespace RogueDHCP
             //actual work
             string ipHeader =
                 "4500" +
-                "0156" + //length
+                (length + 20).ToString("X4") + //length
                 id + //id ?might need to gen
                 "0000" + //flag
                 ttl +
@@ -202,7 +202,7 @@ namespace RogueDHCP
                 ipHeader.Substring(ipHeader.Length - 16, 16);
             return ipHeader;
         }
-        public static DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime="00000e10")
+        public static DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime, params string[] dns)
         {
             //build the DHCP Offer packet (server to client[Broadcast])
             //PAYLOAD
@@ -226,23 +226,30 @@ namespace RogueDHCP
                 "3604" + serverIp + //dhcp server identifire
                 "3304" + leaseTime + //ip lease time
                 "0104" + subnet + //subnet
-                "0F1367656F72676961736F75746865726E2E656475" +//domain name
+                //"0F1367656F72676961736F75746865726E2E656475" +//domain name
                 "0304" + routerIp + //router
-                "0604" + routerIp + //88DA506068DA50109" + //domain name server
-                "FF"; //end
+                "06" + (dns.Length*4).ToString("X2");//04" + routerIp + //88DA506068DA50109" + //domain name server
+            foreach (var dnsAddress in dns)
+            {
+                if (dnsAddress.Length == 8)
+                    bootP += dnsAddress;
+                else
+                    throw new Exception("Invalid DNS address");
+            }
+            bootP+="FF"; //end
             //UDP HEADER
             string udpHeader =
                 "0043" + //source port
                 "0044" + //destination port
                 ((bootP.Length + 16) / 2).ToString("X4") + //length as a 4 digit hex value
-                "43E4"; //checksum ned to gen
+                "0000"; //checksum ned to gen
             //ETHERNET HEADER
             string ethernetHeader =
                 "ffffffffffff" + //destinationMac
                 serverMAC +//98 90 96 D1 BF FC  //sourceMAc
                 "0800";//IPv4
             //IP HEADER
-            string ipHeader = BuildIPHeader("0FDF", "FF", "11", serverIp, "FFFFFFFF");
+            string ipHeader = BuildIPHeader("0FDF", "FF", "11", serverIp, "FFFFFFFF", (udpHeader.Length + bootP.Length) / 2);
             
             string offer = ethernetHeader + ipHeader + udpHeader + bootP;
             //convert offer to byteStream
@@ -259,7 +266,7 @@ namespace RogueDHCP
             //build the DHCP Request packet (client to server[Brodcast])
             return new DHCP();
         }
-        public DHCP DHCPACK(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime = "00000e10")
+        public static DHCP DHCPACK(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime, params string[] dns)
         {
             //build the DHCP ACK packet (server to client)
             string bootP =
@@ -280,16 +287,45 @@ namespace RogueDHCP
                 "3604"+serverIp + //op dhcp id Length (04)  dhcp ip
                 "3304"+leaseTime + //ip lease time
                 "0104"+subnet + //subnet mask
-                "0f13 67656f72676961736f75746865726e2e656475" + //domain name
+                "0f1367656f72676961736f75746865726e2e656475" + //domain name
                 "0304"+ routerIp + //router ip
-                "0608 8da506068da50109" + //dns (actual 2 addresses 8da50606 8da50109)
-                "2b0d 3134312e3136352e3130342e32" + //vendor shit
+                "06" + (dns.Length*4).ToString("X2");//04" + routerIp + //88DA506068DA50109" + //domain name server
+            foreach (var dnsAddress in dns)
+            {
+                if (dnsAddress.Length == 8)
+                    bootP += dnsAddress;
+                else
+                    throw new Exception("Invalid DNS address");
+            }
+            bootP+=
+                "2b0d3134312e3136352e3130342e32" + //vendor shit
                 "ff"; //end and padding
-            return new DHCP();
+            //UDP HEADER
+            string udpHeader =
+                "0043" + //source port
+                "0044" + //destination port
+                ((bootP.Length + 16) / 2).ToString("X4") + //length as a 4 digit hex value
+                "0000"; //checksum ned to gen
+            //ETHERNET HEADER
+            string ethernetHeader =
+                "ffffffffffff" + //destinationMac
+                serverMAC +//98 90 96 D1 BF FC  //sourceMAc
+                "0800";//IPv4
+            //IP HEADER
+            string ipHeader = BuildIPHeader("0FDF", "FF", "11", serverIp, "FFFFFFFF", (udpHeader.Length + bootP.Length) / 2);
+
+            string offer = ethernetHeader + ipHeader + udpHeader + bootP;
+            //convert offer to byteStream
+            byte[] packetData = new byte[offer.Length / 2];
+            for (int i = 0; i < offer.Length; i += 2)
+            {
+                packetData[i / 2] = Convert.ToByte(offer.Substring(i, 2), 16);
+            }
+            return new DHCP() { packet = packetData };
         }
-        public DHCP DHCPNACK(string serverMAC, string serverIp, string transId, string clientMac, string subnet, string routerIp, string leaseTime = "00000e10")
+        public static DHCP DHCPNACK(string serverMAC, string serverIp, string transId, string clientMac, string subnet, string routerIp, string leaseTime = "00000e10")
         {
-            //build the DHCP ACK packet (server to client)
+            //build the DHCP NACK packet (server to client)
             string bootP =
                 "020106" +    //boot reply, Ethernet
                 "02" +        //hops
@@ -307,8 +343,28 @@ namespace RogueDHCP
                 "350106" + //op Message Length 1 (06) NACK(06)
                 "3604" + serverIp + //op dhcp id Length (04)  dhcp ip
                 "381f7265717565737465642061646472657373206e6f7420617661696c61626c65" + //Message Length (1f=31)
-                "ff"; //end and padding
-            return new DHCP();
+                "ff"; //end and padding//UDP HEADER
+            string udpHeader =
+                "0043" + //source port
+                "0044" + //destination port
+                ((bootP.Length + 16) / 2).ToString("X4") + //length as a 4 digit hex value
+                "0000"; //checksum ned to gen
+            //ETHERNET HEADER
+            string ethernetHeader =
+                "ffffffffffff" + //destinationMac
+                serverMAC +//98 90 96 D1 BF FC  //sourceMAc
+                "0800";//IPv4
+            //IP HEADER
+            string ipHeader = BuildIPHeader("0FDF", "FF", "11", serverIp, "FFFFFFFF", (udpHeader.Length+bootP.Length)/2);
+
+            string offer = ethernetHeader + ipHeader + udpHeader + bootP;
+            //convert offer to byteStream
+            byte[] packetData = new byte[offer.Length / 2];
+            for (int i = 0; i < offer.Length; i += 2)
+            {
+                packetData[i / 2] = Convert.ToByte(offer.Substring(i, 2), 16);
+            }
+            return new DHCP() { packet = packetData };
         }
         public DHCP DHCPRelease()
         {
