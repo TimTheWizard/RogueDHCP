@@ -183,9 +183,11 @@ namespace RogueDHCP
             string claimedMAC = "";
             for (int i = 70; i < 76; i++)
                 claimedMAC += packet[i * 2] + "" + packet[i * 2 + 1];
+
             if (targetMAC != claimedMAC)
                 throw new Exception("Spoofed or invalid MAC");
             transactionId = "";
+
             for (int i = 46; i < 50; i++)
                 transactionId += packet[i * 2] + "" + packet[i * 2 + 1];
             parseOptions(packet);
@@ -330,11 +332,12 @@ namespace RogueDHCP
             }
             return new DHCP() { packet = packetData, rawPacketText=offer };
         }
-        public DHCP DHCPRequest()
+        public void DHCPRequest(string packet)
         {
             //MIGHT NOT NEED TO BUILD BUT DO NEED TO READ
+            DHCPDiscover(packet);
             //build the DHCP Request packet (client to server[Brodcast])
-            return new DHCP();
+            
         }
         public static DHCP DHCPACK(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime, params string[] dns)
         {

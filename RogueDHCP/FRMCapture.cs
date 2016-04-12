@@ -170,10 +170,15 @@ namespace PacketCapture
                                         break;
                                     case "02":
                                         //DHCP Offer
+
                                         break;
                                     case "03":
-                                        //DHCP Request
-                                        break;
+                                    //DHCP Request
+
+                                    //Make DHCP object from data
+                                    RogueDHCP.DHCP dhcpRequest = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), "00000e10", FRMCapture.ConvertIpToHex(subnet), FRMCapture.ConvertIpToHex(gateway));
+                                    dhcpRequest.DHCPRequest(rawPacketData);//sets other information derived from the packet amd check for options
+                                    break;
                                     case "04":
                                         //DHCP Decline
                                         break;
