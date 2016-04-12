@@ -24,7 +24,6 @@ namespace UnitTests
         {
             Assert.AreEqual("192.168.11.3", FRMCapture.ConvertHexIpToStandard("c0a80b03"), true);
         }
-        //builds dhcp offer off of exsiting dhcp Packet
         [TestMethod]
         public void BuildBaseDHCP_Clean()
         {
