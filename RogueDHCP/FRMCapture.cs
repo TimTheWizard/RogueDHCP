@@ -23,6 +23,7 @@ namespace PacketCapture
     public partial class FRMCapture : Form
     {
         CaptureDeviceList devices;
+        private static bool ipTableUpdated = false;
         public static ICaptureDevice device;
         public static string rawPacketData = "";
         public static List<string> ipList = new List<string>();
@@ -89,6 +90,14 @@ namespace PacketCapture
                 return "ERROR";
             }
             return "ERROR";
+        }
+        public static string ConvertHexIpToStandard(string ip)
+        {
+            if (ip.Length < 8)
+            {
+                throw new Exception("Invalid IP to convert to Hex");
+            }
+            return Convert.ToInt32(ip.Substring(0, 2), 16) + "." + Convert.ToInt32(ip.Substring(2, 2), 16) + "." + Convert.ToInt32(ip.Substring(4, 2), 16) + "." + Convert.ToInt32(ip.Substring(6, 2), 16);
         }
         private static void device_OnPacketArrival(object sender, CaptureEventArgs args) {
             
@@ -158,14 +167,16 @@ namespace PacketCapture
                                         //DHCP Discover
                                         RogueDHCP.DHCP dhcp = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), "00000e10", FRMCapture.ConvertIpToHex(subnet), FRMCapture.ConvertIpToHex(gateway));
                                         dhcp.DHCPDiscover(rawPacketData);
-                                        string requestedIp;// = dhcp.getOptionData("35");
-                                        if (dhcp.TryGetOption("32", out requestedIp))
+                                        //check to see if they requested an IP address, if so, try and give it to them
+                                        string requestedIp;
+                                        if (dhcp.TryGetOption("32", out requestedIp) && !possibleAddresses.Contains(ConvertHexIpToStandard(requestedIp)))
                                         {
                                             device.SendPacket(dhcp.DHCPOffer(requestedIp).GetPacket());
                                         }
                                         else
                                         {
-                                            device.SendPacket(dhcp.DHCPOffer(ConvertIpToHex(possibleAddresses.First())).GetPacket());
+                                            var offer = dhcp.DHCPOffer(ConvertIpToHex(possibleAddresses.First()));
+                                            device.SendPacket(offer.GetPacket());
                                         }
                                         break;
                                     case "02":
@@ -236,6 +247,7 @@ namespace PacketCapture
                     {
                         if (!ipList.Contains(sourceIp))
                         {
+                            ipTableUpdated = true;
                             ipList.Add(sourceIp);
                             possibleAddresses.Remove(sourceIp);
                         }
@@ -253,17 +265,21 @@ namespace PacketCapture
                 rawPacketData = "";
         }
         private void updateTable()
-        {            
-            int temp1=dataGridView1.FirstDisplayedScrollingRowIndex;
-            ipList.Sort();
-            var ips = ipList.ToArray();
-            dataGridView1.Rows.Clear();
-            foreach (var ip in ips)
+        {
+            if (ipTableUpdated)
             {
-                bool temp = dataGridView1.Columns.Contains(ip);
-                dataGridView1.Rows.Add(ip);
+                int temp1 = dataGridView1.FirstDisplayedScrollingRowIndex;
+                ipList.Sort();
+                var ips = ipList.ToArray();
+                dataGridView1.Rows.Clear();
+                foreach (var ip in ips)
+                {
+                    bool temp = dataGridView1.Columns.Contains(ip);
+                    dataGridView1.Rows.Add(ip);
+                }
+                dataGridView1.FirstDisplayedScrollingRowIndex = temp1;
+                ipTableUpdated = false;
             }
-            dataGridView1.FirstDisplayedScrollingRowIndex = temp1;
         }
         private void btnStartStop_Click(object sender, EventArgs e)
         {
@@ -358,6 +374,7 @@ namespace PacketCapture
         {            
             numPackets = 0;
             ipList.Clear();
+            ipTableUpdated = true;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -396,6 +413,7 @@ namespace PacketCapture
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ipTableUpdated = true;
             ipList.Clear();
         }
 
@@ -448,6 +466,10 @@ namespace PacketCapture
         private List<string> gennerateIPRange()
         {
             List<string> range = new List<string>();
+            if(Address==null)
+            {
+                throw new Exception("No address (is NIC selected?)");
+            }
             var netmask = Address.Netmask;
             string[] ipparts = localIp.Split('.');
             string[] netparts = netmask.ipAddress.ToString().Split('.');
@@ -520,23 +542,37 @@ namespace PacketCapture
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            possibleAddresses = gennerateIPRange();
-            var list = possibleAddresses.ToArray();
-            List<Task<PingReply>> pingTasks = new List<Task<PingReply>>();
-            foreach (var address in list)
+            try
             {
-                pingTasks.Add(PingAsync(address));
+                possibleAddresses = gennerateIPRange();
+                var list = possibleAddresses.ToArray();
+                List<Task<PingReply>> pingTasks = new List<Task<PingReply>>();
+                foreach (var address in list)
+                {
+                    pingTasks.Add(PingAsync(address));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
         private void aRPToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            possibleAddresses = gennerateIPRange();
-            var list = possibleAddresses.ToArray();
-            List<Task<string>> arpTasks = new List<Task<string>>();
-            foreach (var address in list)
+            try
             {
-                arpTasks.Add(ARPAsync(address));
+                possibleAddresses = gennerateIPRange();
+                var list = possibleAddresses.ToArray();
+                List<Task<string>> arpTasks = new List<Task<string>>();
+                foreach (var address in list)
+                {
+                    arpTasks.Add(ARPAsync(address));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -552,6 +588,12 @@ namespace PacketCapture
                 button1.Text = "Turn off DHCP";
                 DHCPisActive = true;
             }
+        }
+
+        private void FRMCapture_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if(device!=null && device.Started)
+                device.Close();
         }
     }
 }
