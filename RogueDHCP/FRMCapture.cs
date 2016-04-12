@@ -23,6 +23,7 @@ namespace PacketCapture
     public partial class FRMCapture : Form
     {
         CaptureDeviceList devices;
+        private static bool ipTableUpdated = false;
         public static ICaptureDevice device;
         public static string rawPacketData = "";
         public static List<string> ipList = new List<string>();
@@ -174,7 +175,8 @@ namespace PacketCapture
                                         }
                                         else
                                         {
-                                            device.SendPacket(dhcp.DHCPOffer(ConvertIpToHex(possibleAddresses.First())).GetPacket());
+                                            var offer = dhcp.DHCPOffer(ConvertIpToHex(possibleAddresses.First()));
+                                            device.SendPacket(offer.GetPacket());
                                         }
                                         break;
                                     case "02":
@@ -240,6 +242,7 @@ namespace PacketCapture
                     {
                         if (!ipList.Contains(sourceIp))
                         {
+                            ipTableUpdated = true;
                             ipList.Add(sourceIp);
                             possibleAddresses.Remove(sourceIp);
                         }
@@ -257,17 +260,21 @@ namespace PacketCapture
                 rawPacketData = "";
         }
         private void updateTable()
-        {            
-            int temp1=dataGridView1.FirstDisplayedScrollingRowIndex;
-            ipList.Sort();
-            var ips = ipList.ToArray();
-            dataGridView1.Rows.Clear();
-            foreach (var ip in ips)
+        {
+            if (ipTableUpdated)
             {
-                bool temp = dataGridView1.Columns.Contains(ip);
-                dataGridView1.Rows.Add(ip);
+                int temp1 = dataGridView1.FirstDisplayedScrollingRowIndex;
+                ipList.Sort();
+                var ips = ipList.ToArray();
+                dataGridView1.Rows.Clear();
+                foreach (var ip in ips)
+                {
+                    bool temp = dataGridView1.Columns.Contains(ip);
+                    dataGridView1.Rows.Add(ip);
+                }
+                dataGridView1.FirstDisplayedScrollingRowIndex = temp1;
+                ipTableUpdated = false;
             }
-            dataGridView1.FirstDisplayedScrollingRowIndex = temp1;
         }
         private void btnStartStop_Click(object sender, EventArgs e)
         {
@@ -362,6 +369,7 @@ namespace PacketCapture
         {            
             numPackets = 0;
             ipList.Clear();
+            ipTableUpdated = true;
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -400,6 +408,7 @@ namespace PacketCapture
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            ipTableUpdated = true;
             ipList.Clear();
         }
 
@@ -578,7 +587,8 @@ namespace PacketCapture
 
         private void FRMCapture_FormClosed(object sender, FormClosedEventArgs e)
         {
-            device.Close();
+            if(device!=null && device.Started)
+                device.Close();
         }
     }
 }
