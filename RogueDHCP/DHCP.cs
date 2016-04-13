@@ -277,9 +277,9 @@ namespace RogueDHCP
                 ipHeader.Substring(ipHeader.Length - 16, 16);
             return ipHeader;
         }
-        public DHCP DHCPOffer(string _offeredIp)
+        public DHCP DHCPOffer(string _offeredIp, params string[] dns)
         {
-            var offer = DHCP.DHCPOffer(this.senderMAC, this.senderIp, this.transactionId, _offeredIp, this.targetMAC, this.subnet, this.routerIp, this.leaseTime, this.dns1, this.dns2);
+            var offer = DHCP.DHCPOffer(this.senderMAC, this.senderIp, this.transactionId, _offeredIp, this.targetMAC, this.subnet, this.routerIp, this.leaseTime, dns);
             return offer;
         }
         public static DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime, params string[] dns)

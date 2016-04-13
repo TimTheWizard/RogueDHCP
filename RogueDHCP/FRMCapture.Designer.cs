@@ -1,4 +1,4 @@
-﻿namespace PacketCapture
+﻿namespace RogueDHCP
 {
     partial class FRMCapture
     {
@@ -47,12 +47,34 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
             this.IP = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.MAC = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Time_Expire = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.button3 = new System.Windows.Forms.Button();
+            this.tabView = new System.Windows.Forms.TabControl();
+            this.tabActive = new System.Windows.Forms.TabPage();
+            this.tabSettings = new System.Windows.Forms.TabPage();
+            this.labelNIC = new System.Windows.Forms.Label();
+            this.textGateway = new System.Windows.Forms.TextBox();
+            this.labelGateway = new System.Windows.Forms.Label();
+            this.labelSubnet = new System.Windows.Forms.Label();
+            this.textBoxSubnet = new System.Windows.Forms.TextBox();
+            this.textBoxDNS2 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.labelDns1 = new System.Windows.Forms.Label();
+            this.textBoxDNS1 = new System.Windows.Forms.TextBox();
+            this.textBoxLeaseTime = new System.Windows.Forms.TextBox();
+            this.labelLease = new System.Windows.Forms.Label();
+            this.labelDomainName = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.tabView.SuspendLayout();
+            this.tabActive.SuspendLayout();
+            this.tabSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnStartStop
@@ -64,7 +86,7 @@
             this.btnStartStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStartStop.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStartStop.ForeColor = System.Drawing.Color.White;
-            this.btnStartStop.Location = new System.Drawing.Point(384, 29);
+            this.btnStartStop.Location = new System.Drawing.Point(489, 6);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Size = new System.Drawing.Size(100, 26);
             this.btnStartStop.TabIndex = 0;
@@ -77,9 +99,9 @@
             this.cmbDevices.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cmbDevices.FormattingEnabled = true;
-            this.cmbDevices.Location = new System.Drawing.Point(14, 60);
+            this.cmbDevices.Location = new System.Drawing.Point(6, 38);
             this.cmbDevices.Name = "cmbDevices";
-            this.cmbDevices.Size = new System.Drawing.Size(468, 22);
+            this.cmbDevices.Size = new System.Drawing.Size(588, 22);
             this.cmbDevices.TabIndex = 1;
             this.cmbDevices.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChange);
             // 
@@ -98,7 +120,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(497, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(615, 24);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -114,14 +136,14 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem1
             // 
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            this.openToolStripMenuItem1.Size = new System.Drawing.Size(102, 22);
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.openToolStripMenuItem1.Text = "Open";
             this.openToolStripMenuItem1.Click += new System.EventHandler(this.openToolStripMenuItem1_Click);
             // 
@@ -136,7 +158,7 @@
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
@@ -198,29 +220,14 @@
             this.IP,
             this.MAC,
             this.Time_Expire});
-            this.dataGridView1.Location = new System.Drawing.Point(14, 89);
+            this.dataGridView1.Location = new System.Drawing.Point(6, 38);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             this.dataGridView1.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dataGridView1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.SteelBlue;
-            this.dataGridView1.Size = new System.Drawing.Size(469, 437);
+            this.dataGridView1.Size = new System.Drawing.Size(588, 453);
             this.dataGridView1.TabIndex = 5;
-            // 
-            // button1
-            // 
-            this.button1.AutoSize = true;
-            this.button1.BackColor = System.Drawing.Color.SteelBlue;
-            this.button1.FlatAppearance.BorderSize = 0;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.White;
-            this.button1.Location = new System.Drawing.Point(14, 29);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 26);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Turn on DHCP";
-            this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.dataGridView1.Visible = false;
             // 
             // IP
             // 
@@ -245,16 +252,232 @@
             this.Time_Expire.Name = "Time_Expire";
             this.Time_Expire.ReadOnly = true;
             // 
+            // button1
+            // 
+            this.button1.AutoSize = true;
+            this.button1.BackColor = System.Drawing.Color.SteelBlue;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.ForeColor = System.Drawing.Color.White;
+            this.button1.Location = new System.Drawing.Point(3, 6);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(101, 26);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "Turn on DHCP";
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button2.AutoSize = true;
+            this.button2.BackColor = System.Drawing.Color.SteelBlue;
+            this.button2.FlatAppearance.BorderSize = 0;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.ForeColor = System.Drawing.Color.White;
+            this.button2.Location = new System.Drawing.Point(388, -125);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(100, 26);
+            this.button2.TabIndex = 0;
+            this.button2.Text = "Start";
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.btnStartStop_Click);
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(-47, -94);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(533, 22);
+            this.comboBox1.TabIndex = 1;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChange);
+            // 
+            // button3
+            // 
+            this.button3.AutoSize = true;
+            this.button3.BackColor = System.Drawing.Color.SteelBlue;
+            this.button3.FlatAppearance.BorderSize = 0;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.ForeColor = System.Drawing.Color.White;
+            this.button3.Location = new System.Drawing.Point(-47, -125);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(101, 26);
+            this.button3.TabIndex = 6;
+            this.button3.Text = "Turn on DHCP";
+            this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // tabView
+            // 
+            this.tabView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabView.Controls.Add(this.tabActive);
+            this.tabView.Controls.Add(this.tabSettings);
+            this.tabView.Location = new System.Drawing.Point(5, 22);
+            this.tabView.Name = "tabView";
+            this.tabView.SelectedIndex = 0;
+            this.tabView.Size = new System.Drawing.Size(605, 521);
+            this.tabView.TabIndex = 7;
+            this.tabView.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabView_Selecting);
+            // 
+            // tabActive
+            // 
+            this.tabActive.Controls.Add(this.button3);
+            this.tabActive.Controls.Add(this.dataGridView1);
+            this.tabActive.Controls.Add(this.button1);
+            this.tabActive.Controls.Add(this.cmbDevices);
+            this.tabActive.Controls.Add(this.button2);
+            this.tabActive.Controls.Add(this.btnStartStop);
+            this.tabActive.Controls.Add(this.comboBox1);
+            this.tabActive.Location = new System.Drawing.Point(4, 23);
+            this.tabActive.Name = "tabActive";
+            this.tabActive.Padding = new System.Windows.Forms.Padding(3);
+            this.tabActive.Size = new System.Drawing.Size(597, 494);
+            this.tabActive.TabIndex = 0;
+            this.tabActive.Text = "Active Data";
+            this.tabActive.UseVisualStyleBackColor = true;
+            // 
+            // tabSettings
+            // 
+            this.tabSettings.Controls.Add(this.textBoxLeaseTime);
+            this.tabSettings.Controls.Add(this.labelLease);
+            this.tabSettings.Controls.Add(this.labelDomainName);
+            this.tabSettings.Controls.Add(this.textBox4);
+            this.tabSettings.Controls.Add(this.textBoxDNS2);
+            this.tabSettings.Controls.Add(this.label1);
+            this.tabSettings.Controls.Add(this.labelDns1);
+            this.tabSettings.Controls.Add(this.textBoxDNS1);
+            this.tabSettings.Controls.Add(this.textBoxSubnet);
+            this.tabSettings.Controls.Add(this.labelSubnet);
+            this.tabSettings.Controls.Add(this.labelGateway);
+            this.tabSettings.Controls.Add(this.textGateway);
+            this.tabSettings.Controls.Add(this.labelNIC);
+            this.tabSettings.Location = new System.Drawing.Point(4, 23);
+            this.tabSettings.Name = "tabSettings";
+            this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSettings.Size = new System.Drawing.Size(597, 494);
+            this.tabSettings.TabIndex = 1;
+            this.tabSettings.Text = "Settings";
+            this.tabSettings.UseVisualStyleBackColor = true;
+            // 
+            // labelNIC
+            // 
+            this.labelNIC.AutoSize = true;
+            this.labelNIC.Location = new System.Drawing.Point(18, 16);
+            this.labelNIC.Name = "labelNIC";
+            this.labelNIC.Size = new System.Drawing.Size(28, 14);
+            this.labelNIC.TabIndex = 0;
+            this.labelNIC.Text = "NIC";
+            // 
+            // textGateway
+            // 
+            this.textGateway.Location = new System.Drawing.Point(146, 58);
+            this.textGateway.Name = "textGateway";
+            this.textGateway.Size = new System.Drawing.Size(100, 20);
+            this.textGateway.TabIndex = 1;
+            // 
+            // labelGateway
+            // 
+            this.labelGateway.AutoSize = true;
+            this.labelGateway.Location = new System.Drawing.Point(18, 61);
+            this.labelGateway.Name = "labelGateway";
+            this.labelGateway.Size = new System.Drawing.Size(56, 14);
+            this.labelGateway.TabIndex = 2;
+            this.labelGateway.Text = "Gateway";
+            // 
+            // labelSubnet
+            // 
+            this.labelSubnet.AutoSize = true;
+            this.labelSubnet.Location = new System.Drawing.Point(322, 61);
+            this.labelSubnet.Name = "labelSubnet";
+            this.labelSubnet.Size = new System.Drawing.Size(84, 14);
+            this.labelSubnet.TabIndex = 3;
+            this.labelSubnet.Text = "Subnet Mask";
+            // 
+            // textBoxSubnet
+            // 
+            this.textBoxSubnet.Location = new System.Drawing.Point(453, 58);
+            this.textBoxSubnet.Name = "textBoxSubnet";
+            this.textBoxSubnet.Size = new System.Drawing.Size(100, 20);
+            this.textBoxSubnet.TabIndex = 4;
+            // 
+            // textBoxDNS2
+            // 
+            this.textBoxDNS2.Location = new System.Drawing.Point(453, 110);
+            this.textBoxDNS2.Name = "textBoxDNS2";
+            this.textBoxDNS2.Size = new System.Drawing.Size(100, 20);
+            this.textBoxDNS2.TabIndex = 8;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(322, 113);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(56, 14);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "DNS (2)";
+            // 
+            // labelDns1
+            // 
+            this.labelDns1.AutoSize = true;
+            this.labelDns1.Location = new System.Drawing.Point(18, 113);
+            this.labelDns1.Name = "labelDns1";
+            this.labelDns1.Size = new System.Drawing.Size(56, 14);
+            this.labelDns1.TabIndex = 6;
+            this.labelDns1.Text = "DNS (1)";
+            // 
+            // textBoxDNS1
+            // 
+            this.textBoxDNS1.Location = new System.Drawing.Point(146, 110);
+            this.textBoxDNS1.Name = "textBoxDNS1";
+            this.textBoxDNS1.Size = new System.Drawing.Size(100, 20);
+            this.textBoxDNS1.TabIndex = 5;
+            // 
+            // textBoxLeaseTime
+            // 
+            this.textBoxLeaseTime.Location = new System.Drawing.Point(453, 84);
+            this.textBoxLeaseTime.Name = "textBoxLeaseTime";
+            this.textBoxLeaseTime.Size = new System.Drawing.Size(100, 20);
+            this.textBoxLeaseTime.TabIndex = 12;
+            // 
+            // labelLease
+            // 
+            this.labelLease.AutoSize = true;
+            this.labelLease.Location = new System.Drawing.Point(322, 87);
+            this.labelLease.Name = "labelLease";
+            this.labelLease.Size = new System.Drawing.Size(77, 14);
+            this.labelLease.TabIndex = 11;
+            this.labelLease.Text = "Lease Time";
+            // 
+            // labelDomainName
+            // 
+            this.labelDomainName.AutoSize = true;
+            this.labelDomainName.Location = new System.Drawing.Point(18, 87);
+            this.labelDomainName.Name = "labelDomainName";
+            this.labelDomainName.Size = new System.Drawing.Size(84, 14);
+            this.labelDomainName.TabIndex = 10;
+            this.labelDomainName.Text = "Domain Name";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(146, 84);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(100, 20);
+            this.textBox4.TabIndex = 9;
+            // 
             // FRMCapture
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(497, 540);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.cmbDevices);
-            this.Controls.Add(this.btnStartStop);
+            this.ClientSize = new System.Drawing.Size(615, 546);
+            this.Controls.Add(this.tabView);
             this.Controls.Add(this.menuStrip1);
             this.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -265,6 +488,11 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.tabView.ResumeLayout(false);
+            this.tabActive.ResumeLayout(false);
+            this.tabActive.PerformLayout();
+            this.tabSettings.ResumeLayout(false);
+            this.tabSettings.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -293,6 +521,25 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn IP;
         private System.Windows.Forms.DataGridViewTextBoxColumn MAC;
         private System.Windows.Forms.DataGridViewTextBoxColumn Time_Expire;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TabControl tabView;
+        private System.Windows.Forms.TabPage tabActive;
+        private System.Windows.Forms.TabPage tabSettings;
+        private System.Windows.Forms.TextBox textBoxLeaseTime;
+        private System.Windows.Forms.Label labelLease;
+        private System.Windows.Forms.Label labelDomainName;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBoxDNS2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelDns1;
+        private System.Windows.Forms.TextBox textBoxDNS1;
+        private System.Windows.Forms.TextBox textBoxSubnet;
+        private System.Windows.Forms.Label labelSubnet;
+        private System.Windows.Forms.Label labelGateway;
+        private System.Windows.Forms.TextBox textGateway;
+        private System.Windows.Forms.Label labelNIC;
     }
 }
 

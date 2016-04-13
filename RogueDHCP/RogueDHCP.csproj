@@ -84,6 +84,7 @@
     <Compile Include="IPTables.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
     <EmbeddedResource Include="FRMCapture.resx">
       <DependentUpon>FRMCapture.cs</DependentUpon>
     </EmbeddedResource>

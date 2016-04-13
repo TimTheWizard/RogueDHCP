@@ -1,4 +1,4 @@
-﻿namespace PacketCapture
+﻿namespace RogueDHCP
 {
     partial class FRMSend
     {

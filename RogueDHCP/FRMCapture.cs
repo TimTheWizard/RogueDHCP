@@ -19,7 +19,7 @@ using System.Threading;
 using System.Net;
 using RogueDHCP;
 
-namespace PacketCapture
+namespace RogueDHCP
 {
     public partial class FRMCapture : Form
     {
@@ -31,13 +31,13 @@ namespace PacketCapture
         //public static List<Tuple<string, string, DateTime>> ipList = new List<Tuple<string, string, DateTime>>();
         //public static List<string> possibleAddresses = new List<string>();
         private static IPTables ipLists;
+        private static Settings settings = new Settings();
         private static bool DHCPisActive = false;
         public static int UDP = 0;
         public static int TCP = 0;
         //the address of the local box
         public static string localIp;
-        public static string subnet;
-        public static string gateway="0.0.0.0";
+        //public static string subnet;
         //the mac of the local box
         public static PhysicalAddress localMAC;
         private PcapAddress Address;
@@ -149,17 +149,17 @@ namespace PacketCapture
                                 {
                                     case "01":
                                         //DHCP Discover
-                                        RogueDHCP.DHCP dhcp = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), "00000e10", FRMCapture.ConvertIpToHex(subnet), FRMCapture.ConvertIpToHex(gateway));
+                                        RogueDHCP.DHCP dhcp = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), settings.leaseTime.ToString("X8"), FRMCapture.ConvertIpToHex(settings.subnet), FRMCapture.ConvertIpToHex(settings.gateway));
                                         dhcp.DHCPDiscover(rawPacketData);
                                         //check to see if they requested an IP address, if so, try and give it to them
                                         string requestedIp;
                                         if (dhcp.TryGetOption("32", out requestedIp) && !ipLists.isAvailable(ConvertHexIpToStandard(requestedIp)))
                                         {
-                                            device.SendPacket(dhcp.DHCPOffer(ConvertIpToHex(requestedIp)).GetPacket());
+                                            device.SendPacket(dhcp.DHCPOffer(ConvertIpToHex(requestedIp), settings.GetDnsHex()).GetPacket());
                                         }
                                         else
                                         {
-                                            var offer = dhcp.DHCPOffer(ConvertIpToHex(ipLists.GetAvalible().First()));
+                                            var offer = dhcp.DHCPOffer(ConvertIpToHex(ipLists.GetAvalible().First()), settings.GetDnsHex());
                                             device.SendPacket(offer.GetPacket());
                                         }
                                         break;
@@ -171,7 +171,7 @@ namespace PacketCapture
                                         //DHCP Request
 
                                         //Make DHCP object from data
-                                        RogueDHCP.DHCP dhcpRequest = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), "00000e10", FRMCapture.ConvertIpToHex(subnet), FRMCapture.ConvertIpToHex(gateway));
+                                        RogueDHCP.DHCP dhcpRequest = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), settings.leaseTime.ToString("X8"), FRMCapture.ConvertIpToHex(settings.subnet), FRMCapture.ConvertIpToHex(settings.gateway));
                                         dhcpRequest.DHCPRequest(rawPacketData);//sets other information derived from the packet amd check for options
                                         if (dhcpRequest.TryGetOption("32", out requestedIp))
                                         {
@@ -277,24 +277,24 @@ namespace PacketCapture
                         device.Open(DeviceMode.Promiscuous, readTimeoutMilliseconds);
                         //pull address info for the nic... probably not the best way to do this, but it works so far....
                         Address = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.ipAddress != null && (x.Addr.ipAddress + "").Length <= 15);
-                        subnet = Address.Netmask.ToString();
+                        settings.subnet = Address.Netmask.ToString();
                         localMAC = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.hardwareAddress != null).Addr.hardwareAddress;
                         localIp = Address.Addr.ipAddress.ToString();
 
                         var devices = NetworkInterface.GetAllNetworkInterfaces();
                         foreach (var nic in devices)
                         {
-                            if (gateway == "0.0.0.0")
+                            if (settings.gateway == "0.0.0.0")
                             foreach (var addressProperties in nic.GetIPProperties().UnicastAddresses)
                             {
                                 if (addressProperties.Address.ToString() == localIp)
                                 {
-                                    gateway = nic.GetIPProperties().GatewayAddresses.First().Address.ToString();
+                                    settings.gateway = nic.GetIPProperties().GatewayAddresses.First().Address.ToString();
                                     break;
                                 }
                             }
                         }
-                        if (gateway=="0.0.0.0")
+                        if (settings.gateway == "0.0.0.0")
                             MessageBox.Show("Error extracting Gateway Address");
 
 
@@ -303,6 +303,8 @@ namespace PacketCapture
                         timer1.Enabled = true;
                         btnStartStop.Text = "Stop";
                         cmbDevices.Enabled = false;
+                        updateSettingsView();
+                        dataGridView1.Visible = true;
                     }
                     catch (Exception ex)
                     {
@@ -323,6 +325,7 @@ namespace PacketCapture
                             Console.WriteLine(pex.Message);
                         }
                         device.Close();
+                        dataGridView1.Visible = false;
                         btnStartStop.Text = "Start";
                         cmbDevices.Enabled = true;
                     }
@@ -340,6 +343,7 @@ namespace PacketCapture
         private void regDevice()
         {
             device = devices.Where(x => x.Description == cmbDevices.SelectedItem.ToString()).FirstOrDefault();
+            settings.NICName = device.Description;
             device.OnPacketArrival += new SharpPcap.PacketArrivalEventHandler(device_OnPacketArrival);
         }
 
@@ -471,7 +475,7 @@ namespace PacketCapture
             try
             {
                 //possibleAddresses = IPTables.gennerateIPRange(localIp, localMAC.ToString());
-                ipLists = new IPTables(localIp, subnet);
+                ipLists = new IPTables(localIp, settings.subnet);
                 var list = ipLists.GetAvalible();
                 List<Task<PingReply>> pingTasks = new List<Task<PingReply>>();
                 foreach (var address in list)
@@ -490,7 +494,7 @@ namespace PacketCapture
             try
             {
                 //possibleAddresses = IPTables.gennerateIPRange(localIp, localMAC.ToString());
-                ipLists = new IPTables(localIp, subnet);
+                ipLists = new IPTables(localIp, settings.subnet);
                 var list = ipLists.GetAvalible();
                 List<Task<string>> arpTasks = new List<Task<string>>();
                 foreach (var address in list)
@@ -522,6 +526,27 @@ namespace PacketCapture
         {
             if(device!=null && device.Started)
                 device.Close();
+        }
+
+        private void tabView_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            if(device==null || !device.Started)
+            {
+                e.Cancel=true;
+                MessageBox.Show("Select NIC First and Start");
+            }
+        }
+        private void updateSettingsView()
+        {
+            var dns = settings.GetDns();
+            if(dns.Length>0)
+                textBoxDNS1.Text = settings.dns[0];
+            if (dns.Length > 1)
+                textBoxDNS2.Text = settings.dns[1];
+            textBoxLeaseTime.Text = settings.leaseTime.ToString();
+            textBoxSubnet.Text = settings.subnet;
+            textGateway.Text = settings.gateway;
+            labelNIC.Text = settings.NICName;
         }
     }
 }

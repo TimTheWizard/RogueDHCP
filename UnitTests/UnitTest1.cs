@@ -43,7 +43,7 @@ namespace UnitTests
         public void BuildBaseDHCP_Clean()
         {
             DHCP baseObj = new DHCP(FRMCapture.ConvertIpToHex("192.168.11.3"), "8DA5D001", "FF", "FFFFFF00", FRMCapture.ConvertIpToHex("192.168.11.1"));
-            DHCP offer = baseObj.DHCPOffer(FRMCapture.ConvertIpToHex("192.168.11.3"));
+            DHCP offer = baseObj.DHCPOffer(FRMCapture.ConvertIpToHex("192.168.11.3"), FRMCapture.ConvertIpToHex("8.8.8.8"), FRMCapture.ConvertIpToHex("8.8.4.4"));
             var data = offer.GetPacket();
             Assert.IsNotNull(data);
             string dataString="";
@@ -53,6 +53,8 @@ namespace UnitTests
                 dataString+=bVal.Length<2? "0"+bVal: bVal;
             }
             string expected = "ffffffffffff8da5d00108004500012f0fdf0000ff11df33c0a80b03ffffffff00430044011b000002010601000000000000800000000000c0a80b03000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005c534d53426f6f745c7836345c7764736e62702e636f6d000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000638253633501023604c0a80b033304ff0104ffffff000304c0a80b0106080808080808080404ff";
+            Console.WriteLine(expected);
+            Console.WriteLine(dataString);
             Assert.AreEqual(expected, dataString, true);
         }
         [TestMethod]
