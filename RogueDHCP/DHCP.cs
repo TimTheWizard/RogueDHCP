@@ -279,10 +279,10 @@ namespace RogueDHCP
         }
         public DHCP DHCPOffer(string _offeredIp, params string[] dns)
         {
-            var offer = DHCP.DHCPOffer(this.senderMAC, this.senderIp, this.transactionId, _offeredIp, this.targetMAC, this.subnet, this.routerIp, this.leaseTime, dns);
+            var offer = DHCP.DHCPOffer(this.senderMAC, this.senderIp, this.transactionId, _offeredIp, this.targetMAC, this.subnet, this.routerIp, this.leaseTime, "", dns);
             return offer;
         }
-        public static DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime, params string[] dns)
+        public static DHCP DHCPOffer(string serverMAC, string serverIp, string transId, string offeredIp, string clientMac, string subnet, string routerIp, string leaseTime, string domainName, params string[] dns)
         {
             //build the DHCP Offer packet (server to client[Broadcast])
             //PAYLOAD
@@ -315,6 +315,10 @@ namespace RogueDHCP
                     bootP += dnsAddress;
                 else
                     throw new Exception("Invalid DNS address");
+            }
+            if (domainName != null && domainName.Length > 0)
+            {
+                bootP+="0F" + (domainName.Length * 4).ToString("X2") + domainName;
             }
             bootP+="FF"; //end
             //UDP HEADER
