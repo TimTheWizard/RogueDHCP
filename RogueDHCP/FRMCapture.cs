@@ -25,7 +25,7 @@ namespace PacketCapture
         CaptureDeviceList devices;
         private static bool ipTableUpdated = false;
         public static ICaptureDevice device;
-        public static string rawPacketData = "";
+        //public static string rawPacketData = "";
         public static List<string> ipList = new List<string>();
         public static List<string> possibleAddresses = new List<string>();
         private static bool DHCPisActive = false;
@@ -103,6 +103,7 @@ namespace PacketCapture
             
                 byte[] data = args.Packet.Data;
                 int byteCounter = 0;
+                var rawPacketData = "";
                 foreach (byte b in data)
                 {
                     byteCounter++;
@@ -123,30 +124,11 @@ namespace PacketCapture
                 string type = "";
                 string sourceIp = "";
                 string destinationIp = "";
-                string sourceMac = "";
-                string destinationMac = "";
-            //mac destination
-                for (int i = 0; i < 6; i++)
-                    destinationMac += rawPacketData[i * 2] + "" + rawPacketData[i * 2 + 1];
-            //mad source
-                for (int i = 8; i < 12; i++)
-                    sourceMac += rawPacketData[i * 2] + "" + rawPacketData[i * 2 + 1];
             //get ethernet type
                 for (int i = 12; i <= 13; i++)
                     type += rawPacketData[i * 2] + "" + rawPacketData[i * 2 + 1];
-                switch (type)
-                {
-                    case "0800":
-                        type = "(IP)";
-                        break;
-                    case "0806":
-                        type = "(ARP)";
-                        break;
-                }
-                //Console.WriteLine(type);
-                //eval source
-                //Console.WriteLine();
-                if (type == "(IP)")
+
+                if (type == "0800")// an ip packet
                 {
                     //is it udp (11)
                     if (rawPacketData[23 * 2].ToString() + rawPacketData[23 * 2 + 1].ToString() == "11" && rawPacketData.Length > 282 * 2)
@@ -171,7 +153,7 @@ namespace PacketCapture
                                         string requestedIp;
                                         if (dhcp.TryGetOption("32", out requestedIp) && !possibleAddresses.Contains(ConvertHexIpToStandard(requestedIp)))
                                         {
-                                            device.SendPacket(dhcp.DHCPOffer(requestedIp).GetPacket());
+                                            device.SendPacket(dhcp.DHCPOffer(ConvertIpToHex(requestedIp)).GetPacket());
                                         }
                                         else
                                         {
@@ -184,11 +166,22 @@ namespace PacketCapture
 
                                         break;
                                     case "03":
-                                    //DHCP Request
+                                        //DHCP Request
 
-                                    //Make DHCP object from data
-                                    RogueDHCP.DHCP dhcpRequest = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), "00000e10", FRMCapture.ConvertIpToHex(subnet), FRMCapture.ConvertIpToHex(gateway));
-                                    dhcpRequest.DHCPRequest(rawPacketData);//sets other information derived from the packet amd check for options
+                                        //Make DHCP object from data
+                                        RogueDHCP.DHCP dhcpRequest = new RogueDHCP.DHCP(ConvertIpToHex(localIp), localMAC.ToString(), "00000e10", FRMCapture.ConvertIpToHex(subnet), FRMCapture.ConvertIpToHex(gateway));
+                                        dhcpRequest.DHCPRequest(rawPacketData);//sets other information derived from the packet amd check for options
+                                        if (dhcpRequest.TryGetOption("32", out requestedIp))
+                                        {
+                                            if (possibleAddresses.Contains(ConvertHexIpToStandard(requestedIp)))
+                                            {
+                                                device.SendPacket(dhcpRequest.DHCPACK(requestedIp).GetPacket());
+                                                possibleAddresses.Remove(ConvertHexIpToStandard(requestedIp));
+                                                ipList.Add(ConvertHexIpToStandard(requestedIp));
+                                            }
+                                            else
+                                                device.SendPacket(dhcpRequest.DHCPNACK().GetPacket());
+                                        }
                                     break;
                                     case "04":
                                         //DHCP Decline
@@ -211,25 +204,10 @@ namespace PacketCapture
                                 }
                             }
                         }
-                    }
-                    //get source ip
-                    for (int i = 26; i <= 29; i++)
-                    {
-                        sourceIp+=Convert.ToInt32((rawPacketData[i * 2] +""+ rawPacketData[i * 2 + 1]), 16);
-                        if (i != 29)
-                            sourceIp += ".";
-                    }
-                    //get destination ip  31-34
-                    for (int i = 30; i <= 33; i++)
-                    {
-                        destinationIp += Convert.ToInt32((rawPacketData[i * 2] + "" + rawPacketData[i * 2 + 1]), 16);
-                        if (i != 33)
-                            destinationIp += ".";
-                    }                                        
+                    }                                   
                 }
-                else if (type == "(ARP)")
+                else if (type == "0806") //an arp packet
                 {
-
                     var arpOp = rawPacketData[20 * 2] + "" + rawPacketData[20 * 2 + 1] + " " + rawPacketData[21 * 2] + "" + rawPacketData[21 * 2 + 1];
                     for (int i = 28; i <= 31; i++)
                     {
