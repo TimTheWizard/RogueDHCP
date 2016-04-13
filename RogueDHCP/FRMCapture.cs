@@ -24,7 +24,7 @@ namespace PacketCapture
     public partial class FRMCapture : Form
     {
         CaptureDeviceList devices;
-        private static bool ipTableUpdated = false;
+        private static bool ipTableUpdated = true;
         public static ICaptureDevice device;
         //public static string rawPacketData = "";
         //ip, mac, time it will expire
@@ -41,7 +41,6 @@ namespace PacketCapture
         //the mac of the local box
         public static PhysicalAddress localMAC;
         private PcapAddress Address;
-        static long numPackets = 0;
         FRMSend fSend;
 
         public FRMCapture()
@@ -227,7 +226,7 @@ namespace PacketCapture
                     if (destinationIp == localIp)
                     {
                         //if we get an arp back from an ip we thought was avalible...
-                        if (ipLists.isAvailable(sourceIp))
+                        if (ipLists!=null && ipLists.isAvailable(sourceIp))
                         {
                             //mac source
                             string sourceMac="";
@@ -251,18 +250,19 @@ namespace PacketCapture
         }
         private void updateTable()
         {
-            if (ipLists!=null && ipLists.isUpdated())
+            if (ipLists!=null && ipLists.isUpdated() && ipTableUpdated)
             {
+                ipTableUpdated = false;
                 int temp1 = dataGridView1.FirstDisplayedScrollingRowIndex;
                 var ips = ipLists.GetIPsInUse();
                 dataGridView1.Rows.Clear();
                 foreach (var ip in ips)
                 {
                     //just add in the ip address for now, may latter add in the mac and date expiring
-                    dataGridView1.Rows.Add(ip.Item1);
+                    dataGridView1.Rows.Add(ip.Item1, ip.Item2, ip.Item3);
                 }
                 dataGridView1.FirstDisplayedScrollingRowIndex = temp1;
-                ipTableUpdated = false;
+                ipTableUpdated = true;
             }
         }
         private void btnStartStop_Click(object sender, EventArgs e)
@@ -362,9 +362,9 @@ namespace PacketCapture
         }
 
         private void clearScreen()
-        {            
-            numPackets = 0;
-            ipTableUpdated = true;
+        {         
+            if(ipLists!=null)
+                ipLists.Reset();
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -403,8 +403,8 @@ namespace PacketCapture
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ipTableUpdated = true;
-            ipLists.Reset();
+            if (ipLists != null)
+                ipLists.Reset();
         }
 
         public void sendPacket(string bytesToSend)

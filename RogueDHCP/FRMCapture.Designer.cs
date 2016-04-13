@@ -47,8 +47,10 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.IP = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button1 = new System.Windows.Forms.Button();
+            this.IP = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MAC = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Time_Expire = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -62,7 +64,7 @@
             this.btnStartStop.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnStartStop.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnStartStop.ForeColor = System.Drawing.Color.White;
-            this.btnStartStop.Location = new System.Drawing.Point(308, 29);
+            this.btnStartStop.Location = new System.Drawing.Point(384, 29);
             this.btnStartStop.Name = "btnStartStop";
             this.btnStartStop.Size = new System.Drawing.Size(100, 26);
             this.btnStartStop.TabIndex = 0;
@@ -77,7 +79,7 @@
             this.cmbDevices.FormattingEnabled = true;
             this.cmbDevices.Location = new System.Drawing.Point(14, 60);
             this.cmbDevices.Name = "cmbDevices";
-            this.cmbDevices.Size = new System.Drawing.Size(392, 22);
+            this.cmbDevices.Size = new System.Drawing.Size(468, 22);
             this.cmbDevices.TabIndex = 1;
             this.cmbDevices.SelectedIndexChanged += new System.EventHandler(this.SelectedIndexChange);
             // 
@@ -96,7 +98,7 @@
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
-            this.menuStrip1.Size = new System.Drawing.Size(421, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(497, 24);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -167,14 +169,14 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(102, 22);
             this.toolStripMenuItem1.Text = "Ping";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // aRPToolStripMenuItem
             // 
             this.aRPToolStripMenuItem.Name = "aRPToolStripMenuItem";
-            this.aRPToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aRPToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
             this.aRPToolStripMenuItem.Text = "ARP";
             this.aRPToolStripMenuItem.Click += new System.EventHandler(this.aRPToolStripMenuItem_Click);
             // 
@@ -193,19 +195,16 @@
             this.dataGridView1.BackgroundColor = System.Drawing.Color.LightSteelBlue;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.IP});
+            this.IP,
+            this.MAC,
+            this.Time_Expire});
             this.dataGridView1.Location = new System.Drawing.Point(14, 89);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             this.dataGridView1.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.dataGridView1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.SteelBlue;
-            this.dataGridView1.Size = new System.Drawing.Size(393, 437);
+            this.dataGridView1.Size = new System.Drawing.Size(469, 437);
             this.dataGridView1.TabIndex = 5;
-            // 
-            // IP
-            // 
-            this.IP.HeaderText = "IP";
-            this.IP.Name = "IP";
             // 
             // button1
             // 
@@ -223,12 +222,35 @@
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // IP
+            // 
+            this.IP.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.IP.FillWeight = 90.63071F;
+            this.IP.HeaderText = "IP";
+            this.IP.Name = "IP";
+            this.IP.ReadOnly = true;
+            // 
+            // MAC
+            // 
+            this.MAC.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.MAC.FillWeight = 76.14214F;
+            this.MAC.HeaderText = "MAC";
+            this.MAC.Name = "MAC";
+            this.MAC.ReadOnly = true;
+            // 
+            // Time_Expire
+            // 
+            this.Time_Expire.FillWeight = 133.2271F;
+            this.Time_Expire.HeaderText = "Time Expire";
+            this.Time_Expire.Name = "Time_Expire";
+            this.Time_Expire.ReadOnly = true;
+            // 
             // FRMCapture
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(421, 540);
+            this.ClientSize = new System.Drawing.Size(497, 540);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.cmbDevices);
@@ -264,11 +286,13 @@
         private System.Windows.Forms.ToolStripMenuItem packetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sendWindowToolStripMenuItem;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.DataGridViewTextBoxColumn IP;
         private System.Windows.Forms.ToolStripMenuItem scanNetworkToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem aRPToolStripMenuItem;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn IP;
+        private System.Windows.Forms.DataGridViewTextBoxColumn MAC;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Time_Expire;
     }
 }
 

@@ -38,6 +38,7 @@ namespace RogueDHCP
                 if (_AvailableIps.Remove(ip))
                 {
                     ipList.Add(new Tuple<string, string, DateTime>(ip, mac, kill));
+                    _updated = true;
                     return true;
                 }
             }
@@ -74,14 +75,14 @@ namespace RogueDHCP
         {
             return _updated;
         }
-        public List<string> GetAvalible()
+        public string[] GetAvalible()
         {
-            _updated = true;
-            return _AvailableIps;
+            _updated = false;
+            return _AvailableIps.ToArray();
         }
         public Tuple<string, string, DateTime>[] GetIPsInUse()
         {
-            _updated = true;
+            _updated = false;
             ipList.Sort();
             return ipList.ToArray();
         }
