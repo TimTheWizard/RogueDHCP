@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace RogueDHCP
 {
@@ -53,6 +55,26 @@ namespace RogueDHCP
                 dnsTemp.Add(FRMCapture.ConvertIpToHex(dnsItem));
             }
             return dnsTemp.ToArray();
+        }
+        // Takes a the path of a file as a String and then writes the 
+        //calling object to an XML file. Creates or Overwrites file.
+        public void Serialize(string file)
+        {
+            using (var stream = new FileStream(file, FileMode.Create))
+            {
+                XmlSerializer xml = new XmlSerializer(typeof(Settings));
+                xml.Serialize(stream, this);//writes the object to the file passed.
+
+            }
+        }
+        //Returns the object that is in the file that was passed as a parameter.
+        public static Settings Deserialize(string file)
+        {
+            using (var stream = new FileStream(file, FileMode.Open)) 
+            {
+                XmlSerializer xml = new XmlSerializer(typeof(Settings));
+               return (Settings)xml.Deserialize(stream);
+            }
         }
     }
 }

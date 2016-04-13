@@ -10,6 +10,14 @@ namespace UnitTests
     public class UnitTest1
     {
         [TestMethod]
+        public void checkSerialization()
+        {
+            Settings test = new Settings("testDomain","255.255.255.255","255.255.255.0","testNIC",3600,"123.123.124.155","111.111.111.123");
+            test.Serialize("test.xml");
+            Settings equalObject = Settings.Deserialize("test.xml");
+            Assert.AreEqual(test.domainName, equalObject.domainName);
+        }
+        [TestMethod]
         public void validIp_True()
         {
             Assert.IsTrue(IPTables.validIp("195.168.10.10"));
