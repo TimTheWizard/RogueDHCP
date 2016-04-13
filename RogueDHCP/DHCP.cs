@@ -564,5 +564,13 @@ namespace RogueDHCP
                 leaseTime = leaseTime
             };
         }
+        public string GetClientMAC()
+        {
+            return targetMAC;
+        }
+        public string GetLeaseTime()
+        {
+            return leaseTime;
+        }
     }
 }

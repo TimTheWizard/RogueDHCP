@@ -17,6 +17,7 @@ using SharpPcap.LibPcap;
 using System.Net.NetworkInformation;
 using System.Threading;
 using System.Net;
+using RogueDHCP;
 
 namespace PacketCapture
 {
@@ -26,8 +27,10 @@ namespace PacketCapture
         private static bool ipTableUpdated = false;
         public static ICaptureDevice device;
         //public static string rawPacketData = "";
-        public static List<string> ipList = new List<string>();
-        public static List<string> possibleAddresses = new List<string>();
+        //ip, mac, time it will expire
+        //public static List<Tuple<string, string, DateTime>> ipList = new List<Tuple<string, string, DateTime>>();
+        //public static List<string> possibleAddresses = new List<string>();
+        private static IPTables ipLists;
         private static bool DHCPisActive = false;
         public static int UDP = 0;
         public static int TCP = 0;
@@ -151,13 +154,13 @@ namespace PacketCapture
                                         dhcp.DHCPDiscover(rawPacketData);
                                         //check to see if they requested an IP address, if so, try and give it to them
                                         string requestedIp;
-                                        if (dhcp.TryGetOption("32", out requestedIp) && !possibleAddresses.Contains(ConvertHexIpToStandard(requestedIp)))
+                                        if (dhcp.TryGetOption("32", out requestedIp) && !ipLists.isAvailable(ConvertHexIpToStandard(requestedIp)))
                                         {
                                             device.SendPacket(dhcp.DHCPOffer(ConvertIpToHex(requestedIp)).GetPacket());
                                         }
                                         else
                                         {
-                                            var offer = dhcp.DHCPOffer(ConvertIpToHex(possibleAddresses.First()));
+                                            var offer = dhcp.DHCPOffer(ConvertIpToHex(ipLists.GetAvalible().First()));
                                             device.SendPacket(offer.GetPacket());
                                         }
                                         break;
@@ -173,11 +176,11 @@ namespace PacketCapture
                                         dhcpRequest.DHCPRequest(rawPacketData);//sets other information derived from the packet amd check for options
                                         if (dhcpRequest.TryGetOption("32", out requestedIp))
                                         {
-                                            if (possibleAddresses.Contains(ConvertHexIpToStandard(requestedIp)))
+                                            if (ipLists.isAvailable(ConvertHexIpToStandard(requestedIp)))
                                             {
-                                                device.SendPacket(dhcpRequest.DHCPACK(requestedIp).GetPacket());
-                                                possibleAddresses.Remove(ConvertHexIpToStandard(requestedIp));
-                                                ipList.Add(ConvertHexIpToStandard(requestedIp));
+                                                var ack = dhcpRequest.DHCPACK(requestedIp);
+                                                device.SendPacket(ack.GetPacket());
+                                                ipLists.reserveIp(ConvertHexIpToStandard(requestedIp), ack.GetClientMAC(), DateTime.Now.AddSeconds(Convert.ToInt32(ack.GetLeaseTime(),16)));
                                             }
                                             else
                                                 device.SendPacket(dhcpRequest.DHCPNACK().GetPacket());
@@ -223,11 +226,15 @@ namespace PacketCapture
                     }
                     if (destinationIp == localIp)
                     {
-                        if (!ipList.Contains(sourceIp))
+                        //if we get an arp back from an ip we thought was avalible...
+                        if (ipLists.isAvailable(sourceIp))
                         {
-                            ipTableUpdated = true;
-                            ipList.Add(sourceIp);
-                            possibleAddresses.Remove(sourceIp);
+                            //mac source
+                            string sourceMac="";
+                            for (int i = 6; i < 12; i++)
+                                sourceMac += rawPacketData[i * 2] + "" + rawPacketData[i * 2 + 1];
+                            //the mac, and the time it will expire We dont know, so just put the max
+                            ipLists.reserveIp(sourceIp, sourceMac, DateTime.MaxValue);
                         }
                         Console.WriteLine(sourceIp + " Replied");
                     }
@@ -244,16 +251,15 @@ namespace PacketCapture
         }
         private void updateTable()
         {
-            if (ipTableUpdated)
+            if (ipLists!=null && ipLists.isUpdated())
             {
                 int temp1 = dataGridView1.FirstDisplayedScrollingRowIndex;
-                ipList.Sort();
-                var ips = ipList.ToArray();
+                var ips = ipLists.GetIPsInUse();
                 dataGridView1.Rows.Clear();
                 foreach (var ip in ips)
                 {
-                    bool temp = dataGridView1.Columns.Contains(ip);
-                    dataGridView1.Rows.Add(ip);
+                    //just add in the ip address for now, may latter add in the mac and date expiring
+                    dataGridView1.Rows.Add(ip.Item1);
                 }
                 dataGridView1.FirstDisplayedScrollingRowIndex = temp1;
                 ipTableUpdated = false;
@@ -338,8 +344,15 @@ namespace PacketCapture
         }
 
         private void timer1_Tick(object sender, EventArgs e)
-        {            
+        {
+            killExpiredIpLeases();
             updateTable();
+        }
+        //nuke all the ip leases that have expired
+        private void killExpiredIpLeases()
+        {
+            if(ipLists!=null)
+                ipLists.updateLists(DateTime.Now);
         }
 
         private void SelectedIndexChange(object sender, EventArgs e)
@@ -351,7 +364,6 @@ namespace PacketCapture
         private void clearScreen()
         {            
             numPackets = 0;
-            ipList.Clear();
             ipTableUpdated = true;
         }
 
@@ -392,7 +404,7 @@ namespace PacketCapture
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ipTableUpdated = true;
-            ipList.Clear();
+            ipLists.Reset();
         }
 
         public void sendPacket(string bytesToSend)
@@ -441,71 +453,7 @@ namespace PacketCapture
         {
                         
         }
-        private List<string> gennerateIPRange()
-        {
-            List<string> range = new List<string>();
-            if(Address==null)
-            {
-                throw new Exception("No address (is NIC selected?)");
-            }
-            var netmask = Address.Netmask;
-            string[] ipparts = localIp.Split('.');
-            string[] netparts = netmask.ipAddress.ToString().Split('.');
-            string ipBinary = "";
-            string netBinary = "";
-            foreach (string oct in ipparts)
-            {
-                string temp =Convert.ToString(Convert.ToInt32(oct), 2);
-                while (temp.Length < 8)
-                {
-                    temp = "0" + temp;
-                }
-                ipBinary += temp;
-            }
-            foreach (string oct in netparts)
-            {
-                string temp = Convert.ToString(Convert.ToInt32(oct), 2);
-                while (temp.Length < 8)
-                {
-                    temp = "0" + temp;
-                }
-                netBinary += temp;
-            }
-            int net = 1 + netBinary.LastIndexOf('1');
-            string root = ipBinary.Substring(0, net);
-            string rootMin = root, rootMax = root;
-            for (int length = rootMin.Length; length < 32; length++)
-            {
-                rootMin += "0";
-                rootMax += "1";
-            }
-            int[] rootMinparts = Enumerable.Range(0, rootMin.Length / 8).Select(i => Convert.ToInt32(rootMin.Substring(i * 8, 8), 2)).ToArray<int>();
-            int[] rootMaxparts = Enumerable.Range(0, rootMax.Length / 8).Select(i => Convert.ToInt32(rootMax.Substring(i * 8, 8),2)).ToArray<int>();
-            int oct1 = rootMinparts[0], oct2 = rootMinparts[1], oct3 = rootMinparts[2], oct4 = rootMinparts[3];
-            do
-            {
-                oct2 = rootMinparts[1];
-                do
-                {
-                    oct3 = rootMinparts[2];
-                    do
-                    {
-                        oct4 = rootMinparts[3];
-                        do
-                        {
-                            range.Add(oct1 + "." + oct2 + "." + oct3 + "." + oct4);
-                            oct4++;
-                        } while (oct4 <= rootMaxparts[3]);
-                        oct3++;
-                    } while (oct3 <= rootMaxparts[2]);
-                    oct2++;
-                } while (oct2 <= rootMaxparts[1]);
-                oct1++;
-            } while(oct1 <= rootMaxparts[0]);
-            range.RemoveAt(0);
-            range.RemoveAt(range.Count-1);
-            return range;
-        }
+        
         public void ARP(IPAddress ipAddress)
         {
             if (ipAddress == null)
@@ -522,8 +470,9 @@ namespace PacketCapture
         {
             try
             {
-                possibleAddresses = gennerateIPRange();
-                var list = possibleAddresses.ToArray();
+                //possibleAddresses = IPTables.gennerateIPRange(localIp, localMAC.ToString());
+                ipLists = new IPTables(localIp, subnet);
+                var list = ipLists.GetAvalible();
                 List<Task<PingReply>> pingTasks = new List<Task<PingReply>>();
                 foreach (var address in list)
                 {
@@ -540,8 +489,9 @@ namespace PacketCapture
         {
             try
             {
-                possibleAddresses = gennerateIPRange();
-                var list = possibleAddresses.ToArray();
+                //possibleAddresses = IPTables.gennerateIPRange(localIp, localMAC.ToString());
+                ipLists = new IPTables(localIp, subnet);
+                var list = ipLists.GetAvalible();
                 List<Task<string>> arpTasks = new List<Task<string>>();
                 foreach (var address in list)
                 {

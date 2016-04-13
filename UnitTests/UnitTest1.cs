@@ -10,6 +10,21 @@ namespace UnitTests
     public class UnitTest1
     {
         [TestMethod]
+        public void validIp_True()
+        {
+            Assert.IsTrue(IPTables.validIp("195.168.10.10"));
+        }
+        [TestMethod]
+        public void validIp_InvalidChar()
+        {
+            Assert.IsFalse(IPTables.validIp("A.168.10.10"));
+        }
+        [TestMethod]
+        public void validIp_OutRange()
+        {
+            Assert.IsFalse(IPTables.validIp("300.168.10.10"));
+        }
+        [TestMethod]
         public void IPChecksumKnownCase_Clean()
         {
             Assert.AreEqual("4D11", DHCP.ChecksumCalc("4500", "0156", "0fdf", "0000", "ff11", "0000", "8DA5", "D001", "FFFF", "FFFF"), true);
