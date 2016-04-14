@@ -24,7 +24,6 @@ namespace RogueDHCP
     public partial class FRMCapture : Form
     {
         CaptureDeviceList devices;
-        private static bool ipTableUpdated = true;
         public static ICaptureDevice device;
         //public static string rawPacketData = "";
         //ip, mac, time it will expire
@@ -37,7 +36,7 @@ namespace RogueDHCP
         public static int TCP = 0;
         //the address of the local box
         public static string localIp;
-        //public static string subnet;
+        private static string lastPacket="";
         //the mac of the local box
         public static PhysicalAddress localMAC;
         private PcapAddress Address;
@@ -111,6 +110,9 @@ namespace RogueDHCP
                     //add byte to sting in hex
                     rawPacketData += b.ToString("X2");
                 }
+                if (rawPacketData == lastPacket)
+                    return;
+                lastPacket = rawPacketData;
                 //MAC
                 //first 8 are destination
                 //second 8 are source
@@ -256,9 +258,8 @@ namespace RogueDHCP
         }
         private void updateTable()
         {
-            if (ipLists!=null && ipLists.isUpdated() && ipTableUpdated)
+            if (ipLists!=null && ipLists.isUpdated())
             {
-                ipTableUpdated = false;
                 int temp1 = dataGridView1.FirstDisplayedScrollingRowIndex;
                 var ips = ipLists.GetIPsInUse();
                 dataGridView1.Rows.Clear();
@@ -267,8 +268,9 @@ namespace RogueDHCP
                     //just add in the ip address for now, may latter add in the mac and date expiring
                     dataGridView1.Rows.Add(ip.Item1, ip.Item2, ip.Item3);
                 }
+                if (dataGridView1.RowCount < temp1)
+                    temp1 = dataGridView1.RowCount - 1;
                 dataGridView1.FirstDisplayedScrollingRowIndex = temp1;
-                ipTableUpdated = true;
             }
         }
         private void btnStartStop_Click(object sender, EventArgs e)
@@ -283,10 +285,12 @@ namespace RogueDHCP
                         device.Open(DeviceMode.Promiscuous, readTimeoutMilliseconds);
                         //pull address info for the nic... probably not the best way to do this, but it works so far....
                         Address = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.ipAddress != null && (x.Addr.ipAddress + "").Length <= 15);
-                        settings.subnet = Address.Netmask.ToString();
                         localMAC = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.hardwareAddress != null).Addr.hardwareAddress;
                         localIp = Address.Addr.ipAddress.ToString();
 
+                        //load settings
+                        settings.NICName = device.Description;
+                        settings.subnet = Address.Netmask.ToString();
                         var devices = NetworkInterface.GetAllNetworkInterfaces();
                         foreach (var nic in devices)
                         {
@@ -349,7 +353,6 @@ namespace RogueDHCP
         private void regDevice()
         {
             device = devices.Where(x => x.Description == cmbDevices.SelectedItem.ToString()).FirstOrDefault();
-            settings.NICName = device.Description;
             device.OnPacketArrival += new SharpPcap.PacketArrivalEventHandler(device_OnPacketArrival);
         }
 
@@ -500,6 +503,10 @@ namespace RogueDHCP
                     arpTasks.Add(ARPAsync(address));
                 }
             }
+            catch (NullReferenceException nul)
+            {
+                MessageBox.Show("NIC must be selected and started");
+            }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
@@ -560,7 +567,7 @@ namespace RogueDHCP
         {
             try
             {
-                settings.Serialize("DATA.xml");
+                settings.Serialize(@"settings\DATA.xml");
             }
             catch(Exception ex)
             {
