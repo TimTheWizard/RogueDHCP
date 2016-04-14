@@ -38,12 +38,9 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.screenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sendWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.scanNetworkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.aRPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aRPToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -57,19 +54,19 @@
             this.tabView = new System.Windows.Forms.TabControl();
             this.tabActive = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
-            this.labelNIC = new System.Windows.Forms.Label();
-            this.textGateway = new System.Windows.Forms.TextBox();
-            this.labelGateway = new System.Windows.Forms.Label();
-            this.labelSubnet = new System.Windows.Forms.Label();
-            this.textBoxSubnet = new System.Windows.Forms.TextBox();
-            this.textBoxDNS2 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelDns1 = new System.Windows.Forms.Label();
-            this.textBoxDNS1 = new System.Windows.Forms.TextBox();
             this.textBoxLeaseTime = new System.Windows.Forms.TextBox();
             this.labelLease = new System.Windows.Forms.Label();
             this.labelDomainName = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBoxDNS2 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.labelDns1 = new System.Windows.Forms.Label();
+            this.textBoxDNS1 = new System.Windows.Forms.TextBox();
+            this.textBoxSubnet = new System.Windows.Forms.TextBox();
+            this.labelSubnet = new System.Windows.Forms.Label();
+            this.labelGateway = new System.Windows.Forms.Label();
+            this.textGateway = new System.Windows.Forms.TextBox();
+            this.labelNIC = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabView.SuspendLayout();
@@ -136,71 +133,46 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem1
             // 
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            this.openToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(102, 22);
             this.openToolStripMenuItem1.Text = "Open";
             this.openToolStripMenuItem1.Click += new System.EventHandler(this.openToolStripMenuItem1_Click);
             // 
             // screenToolStripMenuItem
             // 
-            this.screenToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.clearToolStripMenuItem});
             this.screenToolStripMenuItem.Name = "screenToolStripMenuItem";
-            this.screenToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.screenToolStripMenuItem.Text = "Screen";
-            // 
-            // clearToolStripMenuItem
-            // 
-            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.clearToolStripMenuItem.Text = "Clear";
-            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
+            this.screenToolStripMenuItem.Size = new System.Drawing.Size(54, 20);
+            this.screenToolStripMenuItem.Text = "Clear";
+            this.screenToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // packetsToolStripMenuItem
             // 
             this.packetsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.sendWindowToolStripMenuItem,
-            this.scanNetworkToolStripMenuItem});
+            this.pingToolStripMenuItem,
+            this.aRPToolStripMenuItem1});
             this.packetsToolStripMenuItem.Name = "packetsToolStripMenuItem";
-            this.packetsToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
-            this.packetsToolStripMenuItem.Text = "Packets";
+            this.packetsToolStripMenuItem.Size = new System.Drawing.Size(103, 20);
+            this.packetsToolStripMenuItem.Text = "Scan Network";
             // 
-            // sendWindowToolStripMenuItem
+            // pingToolStripMenuItem
             // 
-            this.sendWindowToolStripMenuItem.Name = "sendWindowToolStripMenuItem";
-            this.sendWindowToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
-            this.sendWindowToolStripMenuItem.Text = "&Send Window";
-            this.sendWindowToolStripMenuItem.Click += new System.EventHandler(this.sendWindowToolStripMenuItem_Click);
+            this.pingToolStripMenuItem.Name = "pingToolStripMenuItem";
+            this.pingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pingToolStripMenuItem.Text = "Ping";
+            this.pingToolStripMenuItem.Click += new System.EventHandler(this.pingStripMenuItem_Click);
             // 
-            // scanNetworkToolStripMenuItem
+            // aRPToolStripMenuItem1
             // 
-            this.scanNetworkToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1,
-            this.aRPToolStripMenuItem});
-            this.scanNetworkToolStripMenuItem.Name = "scanNetworkToolStripMenuItem";
-            this.scanNetworkToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
-            this.scanNetworkToolStripMenuItem.Text = "Scan Network";
-            this.scanNetworkToolStripMenuItem.Click += new System.EventHandler(this.scanNetworkToolStripMenuItem_Click);
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(102, 22);
-            this.toolStripMenuItem1.Text = "Ping";
-            this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
-            // 
-            // aRPToolStripMenuItem
-            // 
-            this.aRPToolStripMenuItem.Name = "aRPToolStripMenuItem";
-            this.aRPToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
-            this.aRPToolStripMenuItem.Text = "ARP";
-            this.aRPToolStripMenuItem.Click += new System.EventHandler(this.aRPToolStripMenuItem_Click);
+            this.aRPToolStripMenuItem1.Name = "aRPToolStripMenuItem1";
+            this.aRPToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.aRPToolStripMenuItem1.Text = "ARP";
+            this.aRPToolStripMenuItem1.Click += new System.EventHandler(this.aRPToolStripMenuItem_Click);
             // 
             // openFileDialog1
             // 
@@ -366,46 +338,38 @@
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
-            // labelNIC
+            // textBoxLeaseTime
             // 
-            this.labelNIC.AutoSize = true;
-            this.labelNIC.Location = new System.Drawing.Point(18, 16);
-            this.labelNIC.Name = "labelNIC";
-            this.labelNIC.Size = new System.Drawing.Size(28, 14);
-            this.labelNIC.TabIndex = 0;
-            this.labelNIC.Text = "NIC";
+            this.textBoxLeaseTime.Location = new System.Drawing.Point(453, 84);
+            this.textBoxLeaseTime.Name = "textBoxLeaseTime";
+            this.textBoxLeaseTime.Size = new System.Drawing.Size(100, 20);
+            this.textBoxLeaseTime.TabIndex = 12;
+            this.textBoxLeaseTime.TextChanged += new System.EventHandler(this.textBoxLeaseTime_TextChanged);
             // 
-            // textGateway
+            // labelLease
             // 
-            this.textGateway.Location = new System.Drawing.Point(146, 58);
-            this.textGateway.Name = "textGateway";
-            this.textGateway.Size = new System.Drawing.Size(100, 20);
-            this.textGateway.TabIndex = 1;
+            this.labelLease.AutoSize = true;
+            this.labelLease.Location = new System.Drawing.Point(322, 87);
+            this.labelLease.Name = "labelLease";
+            this.labelLease.Size = new System.Drawing.Size(77, 14);
+            this.labelLease.TabIndex = 11;
+            this.labelLease.Text = "Lease Time";
             // 
-            // labelGateway
+            // labelDomainName
             // 
-            this.labelGateway.AutoSize = true;
-            this.labelGateway.Location = new System.Drawing.Point(18, 61);
-            this.labelGateway.Name = "labelGateway";
-            this.labelGateway.Size = new System.Drawing.Size(56, 14);
-            this.labelGateway.TabIndex = 2;
-            this.labelGateway.Text = "Gateway";
+            this.labelDomainName.AutoSize = true;
+            this.labelDomainName.Location = new System.Drawing.Point(18, 87);
+            this.labelDomainName.Name = "labelDomainName";
+            this.labelDomainName.Size = new System.Drawing.Size(84, 14);
+            this.labelDomainName.TabIndex = 10;
+            this.labelDomainName.Text = "Domain Name";
             // 
-            // labelSubnet
+            // textBox4
             // 
-            this.labelSubnet.AutoSize = true;
-            this.labelSubnet.Location = new System.Drawing.Point(322, 61);
-            this.labelSubnet.Name = "labelSubnet";
-            this.labelSubnet.Size = new System.Drawing.Size(84, 14);
-            this.labelSubnet.TabIndex = 3;
-            this.labelSubnet.Text = "Subnet Mask";
-            // 
-            // textBoxSubnet
-            // 
-            this.textBoxSubnet.Location = new System.Drawing.Point(453, 58);
-            this.textBoxSubnet.Name = "textBoxSubnet";
-            this.textBoxSubnet.Size = new System.Drawing.Size(100, 20);
-            this.textBoxSubnet.TabIndex = 4;
+            this.textBox4.Location = new System.Drawing.Point(146, 84);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(100, 20);
+            this.textBox4.TabIndex = 9;
             // 
             // textBoxDNS2
             // 
@@ -439,37 +403,46 @@
             this.textBoxDNS1.Size = new System.Drawing.Size(100, 20);
             this.textBoxDNS1.TabIndex = 5;
             // 
-            // textBoxLeaseTime
+            // textBoxSubnet
             // 
-            this.textBoxLeaseTime.Location = new System.Drawing.Point(453, 84);
-            this.textBoxLeaseTime.Name = "textBoxLeaseTime";
-            this.textBoxLeaseTime.Size = new System.Drawing.Size(100, 20);
-            this.textBoxLeaseTime.TabIndex = 12;
+            this.textBoxSubnet.Location = new System.Drawing.Point(453, 58);
+            this.textBoxSubnet.Name = "textBoxSubnet";
+            this.textBoxSubnet.Size = new System.Drawing.Size(100, 20);
+            this.textBoxSubnet.TabIndex = 4;
             // 
-            // labelLease
+            // labelSubnet
             // 
-            this.labelLease.AutoSize = true;
-            this.labelLease.Location = new System.Drawing.Point(322, 87);
-            this.labelLease.Name = "labelLease";
-            this.labelLease.Size = new System.Drawing.Size(77, 14);
-            this.labelLease.TabIndex = 11;
-            this.labelLease.Text = "Lease Time";
+            this.labelSubnet.AutoSize = true;
+            this.labelSubnet.Location = new System.Drawing.Point(322, 61);
+            this.labelSubnet.Name = "labelSubnet";
+            this.labelSubnet.Size = new System.Drawing.Size(84, 14);
+            this.labelSubnet.TabIndex = 3;
+            this.labelSubnet.Text = "Subnet Mask";
             // 
-            // labelDomainName
+            // labelGateway
             // 
-            this.labelDomainName.AutoSize = true;
-            this.labelDomainName.Location = new System.Drawing.Point(18, 87);
-            this.labelDomainName.Name = "labelDomainName";
-            this.labelDomainName.Size = new System.Drawing.Size(84, 14);
-            this.labelDomainName.TabIndex = 10;
-            this.labelDomainName.Text = "Domain Name";
+            this.labelGateway.AutoSize = true;
+            this.labelGateway.Location = new System.Drawing.Point(18, 61);
+            this.labelGateway.Name = "labelGateway";
+            this.labelGateway.Size = new System.Drawing.Size(56, 14);
+            this.labelGateway.TabIndex = 2;
+            this.labelGateway.Text = "Gateway";
             // 
-            // textBox4
+            // textGateway
             // 
-            this.textBox4.Location = new System.Drawing.Point(146, 84);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 20);
-            this.textBox4.TabIndex = 9;
+            this.textGateway.Location = new System.Drawing.Point(146, 58);
+            this.textGateway.Name = "textGateway";
+            this.textGateway.Size = new System.Drawing.Size(100, 20);
+            this.textGateway.TabIndex = 1;
+            // 
+            // labelNIC
+            // 
+            this.labelNIC.AutoSize = true;
+            this.labelNIC.Location = new System.Drawing.Point(18, 16);
+            this.labelNIC.Name = "labelNIC";
+            this.labelNIC.Size = new System.Drawing.Size(28, 14);
+            this.labelNIC.TabIndex = 0;
+            this.labelNIC.Text = "NIC";
             // 
             // FRMCapture
             // 
@@ -508,15 +481,10 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem screenToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
         private System.Windows.Forms.SaveFileDialog saveFileDialog1;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.ToolStripMenuItem packetsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem sendWindowToolStripMenuItem;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.ToolStripMenuItem scanNetworkToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
-        private System.Windows.Forms.ToolStripMenuItem aRPToolStripMenuItem;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.DataGridViewTextBoxColumn IP;
         private System.Windows.Forms.DataGridViewTextBoxColumn MAC;
@@ -540,6 +508,8 @@
         private System.Windows.Forms.Label labelGateway;
         private System.Windows.Forms.TextBox textGateway;
         private System.Windows.Forms.Label labelNIC;
+        private System.Windows.Forms.ToolStripMenuItem pingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aRPToolStripMenuItem1;
     }
 }
 

@@ -114,7 +114,7 @@ namespace RogueDHCP
         public string rawPacketText;
         private byte[] packet;
         private string senderIp = "00000000";
-        private string targetIp = "00000000";
+        public string targetIp = "00000000";
         public string offeredIp = "00000000";
         private string senderMAC = "000000000000";
         private string targetMAC = "000000000000";
@@ -152,6 +152,11 @@ namespace RogueDHCP
                             + rawPacketData[280 * 2].ToString() + rawPacketData[280 * 2 + 1].ToString()
                             + rawPacketData[281 * 2].ToString() + rawPacketData[281 * 2 + 1].ToString())
             {
+                targetIp = "";
+                for (int n = 54; n < 58; n++)
+                {
+                    targetIp += rawPacketData[n * 2].ToString() + rawPacketData[n * 2 + 1].ToString();
+                }
                 optionData = rawPacketData.Substring(282 * 2, rawPacketData.LastIndexOf("FF") - 282 * 2);
                 int i = 0;
                 while (i < optionData.Length)
