@@ -57,19 +57,21 @@
             this.tabView = new System.Windows.Forms.TabControl();
             this.tabActive = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
-            this.labelNIC = new System.Windows.Forms.Label();
-            this.textGateway = new System.Windows.Forms.TextBox();
-            this.labelGateway = new System.Windows.Forms.Label();
-            this.labelSubnet = new System.Windows.Forms.Label();
-            this.textBoxSubnet = new System.Windows.Forms.TextBox();
-            this.textBoxDNS2 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelDns1 = new System.Windows.Forms.Label();
-            this.textBoxDNS1 = new System.Windows.Forms.TextBox();
+            this.button4 = new System.Windows.Forms.Button();
             this.textBoxLeaseTime = new System.Windows.Forms.TextBox();
             this.labelLease = new System.Windows.Forms.Label();
             this.labelDomainName = new System.Windows.Forms.Label();
             this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBoxDNS2 = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.labelDns1 = new System.Windows.Forms.Label();
+            this.textBoxDNS1 = new System.Windows.Forms.TextBox();
+            this.textBoxSubnet = new System.Windows.Forms.TextBox();
+            this.labelSubnet = new System.Windows.Forms.Label();
+            this.labelGateway = new System.Windows.Forms.Label();
+            this.textGateway = new System.Windows.Forms.TextBox();
+            this.labelNIC = new System.Windows.Forms.Label();
+            this.applyButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabView.SuspendLayout();
@@ -136,14 +138,14 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem1
             // 
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            this.openToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(102, 22);
             this.openToolStripMenuItem1.Text = "Open";
             this.openToolStripMenuItem1.Click += new System.EventHandler(this.openToolStripMenuItem1_Click);
             // 
@@ -158,7 +160,7 @@
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.clearToolStripMenuItem.Text = "Clear";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
@@ -191,14 +193,14 @@
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(102, 22);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItem1.Text = "Ping";
             this.toolStripMenuItem1.Click += new System.EventHandler(this.toolStripMenuItem1_Click);
             // 
             // aRPToolStripMenuItem
             // 
             this.aRPToolStripMenuItem.Name = "aRPToolStripMenuItem";
-            this.aRPToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
+            this.aRPToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.aRPToolStripMenuItem.Text = "ARP";
             this.aRPToolStripMenuItem.Click += new System.EventHandler(this.aRPToolStripMenuItem_Click);
             // 
@@ -345,6 +347,8 @@
             // 
             // tabSettings
             // 
+            this.tabSettings.Controls.Add(this.applyButton);
+            this.tabSettings.Controls.Add(this.button4);
             this.tabSettings.Controls.Add(this.textBoxLeaseTime);
             this.tabSettings.Controls.Add(this.labelLease);
             this.tabSettings.Controls.Add(this.labelDomainName);
@@ -366,46 +370,44 @@
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
-            // labelNIC
+            // button4
             // 
-            this.labelNIC.AutoSize = true;
-            this.labelNIC.Location = new System.Drawing.Point(18, 16);
-            this.labelNIC.Name = "labelNIC";
-            this.labelNIC.Size = new System.Drawing.Size(28, 14);
-            this.labelNIC.TabIndex = 0;
-            this.labelNIC.Text = "NIC";
+            this.button4.Location = new System.Drawing.Point(0, 0);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.TabIndex = 0;
             // 
-            // textGateway
+            // textBoxLeaseTime
             // 
-            this.textGateway.Location = new System.Drawing.Point(146, 58);
-            this.textGateway.Name = "textGateway";
-            this.textGateway.Size = new System.Drawing.Size(100, 20);
-            this.textGateway.TabIndex = 1;
+            this.textBoxLeaseTime.Location = new System.Drawing.Point(453, 84);
+            this.textBoxLeaseTime.Name = "textBoxLeaseTime";
+            this.textBoxLeaseTime.Size = new System.Drawing.Size(100, 20);
+            this.textBoxLeaseTime.TabIndex = 12;
             // 
-            // labelGateway
+            // labelLease
             // 
-            this.labelGateway.AutoSize = true;
-            this.labelGateway.Location = new System.Drawing.Point(18, 61);
-            this.labelGateway.Name = "labelGateway";
-            this.labelGateway.Size = new System.Drawing.Size(56, 14);
-            this.labelGateway.TabIndex = 2;
-            this.labelGateway.Text = "Gateway";
+            this.labelLease.AutoSize = true;
+            this.labelLease.Location = new System.Drawing.Point(322, 87);
+            this.labelLease.Name = "labelLease";
+            this.labelLease.Size = new System.Drawing.Size(77, 14);
+            this.labelLease.TabIndex = 11;
+            this.labelLease.Text = "Lease Time";
             // 
-            // labelSubnet
+            // labelDomainName
             // 
-            this.labelSubnet.AutoSize = true;
-            this.labelSubnet.Location = new System.Drawing.Point(322, 61);
-            this.labelSubnet.Name = "labelSubnet";
-            this.labelSubnet.Size = new System.Drawing.Size(84, 14);
-            this.labelSubnet.TabIndex = 3;
-            this.labelSubnet.Text = "Subnet Mask";
+            this.labelDomainName.AutoSize = true;
+            this.labelDomainName.Location = new System.Drawing.Point(18, 87);
+            this.labelDomainName.Name = "labelDomainName";
+            this.labelDomainName.Size = new System.Drawing.Size(84, 14);
+            this.labelDomainName.TabIndex = 10;
+            this.labelDomainName.Text = "Domain Name";
             // 
-            // textBoxSubnet
+            // textBox4
             // 
-            this.textBoxSubnet.Location = new System.Drawing.Point(453, 58);
-            this.textBoxSubnet.Name = "textBoxSubnet";
-            this.textBoxSubnet.Size = new System.Drawing.Size(100, 20);
-            this.textBoxSubnet.TabIndex = 4;
+            this.textBox4.Location = new System.Drawing.Point(146, 84);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(100, 20);
+            this.textBox4.TabIndex = 9;
             // 
             // textBoxDNS2
             // 
@@ -439,37 +441,56 @@
             this.textBoxDNS1.Size = new System.Drawing.Size(100, 20);
             this.textBoxDNS1.TabIndex = 5;
             // 
-            // textBoxLeaseTime
+            // textBoxSubnet
             // 
-            this.textBoxLeaseTime.Location = new System.Drawing.Point(453, 84);
-            this.textBoxLeaseTime.Name = "textBoxLeaseTime";
-            this.textBoxLeaseTime.Size = new System.Drawing.Size(100, 20);
-            this.textBoxLeaseTime.TabIndex = 12;
+            this.textBoxSubnet.Location = new System.Drawing.Point(453, 58);
+            this.textBoxSubnet.Name = "textBoxSubnet";
+            this.textBoxSubnet.Size = new System.Drawing.Size(100, 20);
+            this.textBoxSubnet.TabIndex = 4;
             // 
-            // labelLease
+            // labelSubnet
             // 
-            this.labelLease.AutoSize = true;
-            this.labelLease.Location = new System.Drawing.Point(322, 87);
-            this.labelLease.Name = "labelLease";
-            this.labelLease.Size = new System.Drawing.Size(77, 14);
-            this.labelLease.TabIndex = 11;
-            this.labelLease.Text = "Lease Time";
+            this.labelSubnet.AutoSize = true;
+            this.labelSubnet.Location = new System.Drawing.Point(322, 61);
+            this.labelSubnet.Name = "labelSubnet";
+            this.labelSubnet.Size = new System.Drawing.Size(84, 14);
+            this.labelSubnet.TabIndex = 3;
+            this.labelSubnet.Text = "Subnet Mask";
             // 
-            // labelDomainName
+            // labelGateway
             // 
-            this.labelDomainName.AutoSize = true;
-            this.labelDomainName.Location = new System.Drawing.Point(18, 87);
-            this.labelDomainName.Name = "labelDomainName";
-            this.labelDomainName.Size = new System.Drawing.Size(84, 14);
-            this.labelDomainName.TabIndex = 10;
-            this.labelDomainName.Text = "Domain Name";
+            this.labelGateway.AutoSize = true;
+            this.labelGateway.Location = new System.Drawing.Point(18, 61);
+            this.labelGateway.Name = "labelGateway";
+            this.labelGateway.Size = new System.Drawing.Size(56, 14);
+            this.labelGateway.TabIndex = 2;
+            this.labelGateway.Text = "Gateway";
             // 
-            // textBox4
+            // textGateway
             // 
-            this.textBox4.Location = new System.Drawing.Point(146, 84);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 20);
-            this.textBox4.TabIndex = 9;
+            this.textGateway.Location = new System.Drawing.Point(146, 58);
+            this.textGateway.Name = "textGateway";
+            this.textGateway.Size = new System.Drawing.Size(100, 20);
+            this.textGateway.TabIndex = 1;
+            // 
+            // labelNIC
+            // 
+            this.labelNIC.AutoSize = true;
+            this.labelNIC.Location = new System.Drawing.Point(18, 16);
+            this.labelNIC.Name = "labelNIC";
+            this.labelNIC.Size = new System.Drawing.Size(28, 14);
+            this.labelNIC.TabIndex = 0;
+            this.labelNIC.Text = "NIC";
+            // 
+            // applyButton
+            // 
+            this.applyButton.Location = new System.Drawing.Point(453, 173);
+            this.applyButton.Name = "applyButton";
+            this.applyButton.Size = new System.Drawing.Size(82, 28);
+            this.applyButton.TabIndex = 13;
+            this.applyButton.Text = "Apply";
+            this.applyButton.UseVisualStyleBackColor = true;
+            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
             // 
             // FRMCapture
             // 
@@ -534,12 +555,14 @@
         private System.Windows.Forms.TextBox textBoxDNS2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelDns1;
-        private System.Windows.Forms.TextBox textBoxDNS1;
+        public System.Windows.Forms.TextBox textBoxDNS1;
         private System.Windows.Forms.TextBox textBoxSubnet;
         private System.Windows.Forms.Label labelSubnet;
         private System.Windows.Forms.Label labelGateway;
-        private System.Windows.Forms.TextBox textGateway;
+        public System.Windows.Forms.TextBox textGateway;
         private System.Windows.Forms.Label labelNIC;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button applyButton;
     }
 }
 

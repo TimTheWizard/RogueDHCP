@@ -548,5 +548,18 @@ namespace RogueDHCP
             textGateway.Text = settings.gateway;
             labelNIC.Text = settings.NICName;
         }
+
+        private void applyButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                settings.Serialize("DATA.xml");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.StackTrace);
+            }
+
+        }
     }
 }
