@@ -33,14 +33,25 @@ namespace RogueDHCP
         {
             if (!validIp(ip))
                 throw new Exception("Invalid ip");
+            //check that it is avalible
             if (_AvailableIps.Contains(ip))
             {
+                //if so, move it over to the inuse list
                 if (_AvailableIps.Remove(ip))
                 {
                     ipList.Add(new Tuple<string, string, DateTime>(ip, mac, kill));
                     _updated = true;
                     return true;
                 }
+            }
+            //if its an update, just reset the kill time
+            var item = ipList.FirstOrDefault(x => x.Item1 == ip && x.Item2 == mac);
+            if (item!=null)
+            {
+                ipList.Remove(item);
+                ipList.Add(new Tuple<string, string, DateTime>(ip, mac, kill));
+                _updated = true;
+                return true;
             }
             return false;
         }
@@ -180,6 +191,16 @@ namespace RogueDHCP
             _AvailableIps = _AllIP.ToList();
             ipList.Clear();
             _updated = true;
+        }
+
+        public string WhoHas(string ip)
+        {
+            var owner = ipList.FirstOrDefault(x => x.Item1 == ip);
+            if(owner!=null)
+            {
+                return owner.Item2;
+            }
+            return null;
         }
     }
 }

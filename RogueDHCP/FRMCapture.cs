@@ -41,7 +41,6 @@ namespace RogueDHCP
         //the mac of the local box
         public static PhysicalAddress localMAC;
         private PcapAddress Address;
-        FRMSend fSend;
 
         public FRMCapture()
         {
@@ -175,7 +174,8 @@ namespace RogueDHCP
                                         dhcpRequest.DHCPRequest(rawPacketData);//sets other information derived from the packet amd check for options
                                         if (dhcpRequest.TryGetOption("32", out requestedIp))
                                         {
-                                            if (ipLists.isAvailable(ConvertHexIpToStandard(requestedIp)))
+                                            // the ipAdress is avalible or the ipAddress is being used by the mac already
+                                            if (ipLists.isAvailable(ConvertHexIpToStandard(requestedIp)) || ipLists.WhoHas(ConvertHexIpToStandard(requestedIp)) == dhcpRequest.GetClientMAC())
                                             {
                                                 var ack = dhcpRequest.DHCPACK(requestedIp);
                                                 device.SendPacket(ack.GetPacket());
@@ -183,6 +183,12 @@ namespace RogueDHCP
                                             }
                                             else
                                                 device.SendPacket(dhcpRequest.DHCPNACK().GetPacket());
+                                        }
+                                        else if (ipLists.WhoHas(ConvertHexIpToStandard(dhcpRequest.targetIp)) == dhcpRequest.GetClientMAC())
+                                        {
+                                            var ack = dhcpRequest.DHCPACK(dhcpRequest.targetIp);
+                                            device.SendPacket(ack.GetPacket());
+                                            ipLists.reserveIp(ConvertHexIpToStandard(dhcpRequest.targetIp), ack.GetClientMAC(), DateTime.Now.AddSeconds(Convert.ToInt32(ack.GetLeaseTime(), 16)));
                                         }
                                     break;
                                     case "04":
@@ -395,14 +401,6 @@ namespace RogueDHCP
             }
         }
 
-        private void sendWindowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (FRMSend.instantiations < 3)
-            {
-                fSend = new FRMSend();
-                fSend.Show();
-            }
-        }
         private static string selectedIp;
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
@@ -470,7 +468,7 @@ namespace RogueDHCP
             device.SendPacket(ethernetPacket);
         }
 
-        private void toolStripMenuItem1_Click(object sender, EventArgs e)
+        private void pingStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
@@ -547,6 +545,15 @@ namespace RogueDHCP
             textBoxSubnet.Text = settings.subnet;
             textGateway.Text = settings.gateway;
             labelNIC.Text = settings.NICName;
+        }
+
+        private void textBoxLeaseTime_TextChanged(object sender, EventArgs e)
+        {
+            try{
+                settings.leaseTime=Convert.ToInt32(textBoxLeaseTime.Text);
+            }catch(Exception ex){
+                MessageBox.Show("Invalid Lease Time");
+            }
         }
 
         private void applyButton_Click(object sender, EventArgs e)
