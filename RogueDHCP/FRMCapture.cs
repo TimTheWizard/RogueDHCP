@@ -567,12 +567,25 @@ namespace RogueDHCP
         {
             try
             {
-                settings.Serialize(@"settings\DATA.xml");
+                string path = getFileSafeName(settings.NICName);
+                settings.Serialize(path);
+                MessageBox.Show("Settings Saved");
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.StackTrace);
+
             }
+        }
+
+        private string getFileSafeName(string nICName)
+        {
+      
+            string pattern = "\\W";
+            string replacement = "DT3";//random replacement
+            Regex rgx = new Regex(pattern);
+            string result = @"settings\"+rgx.Replace(nICName.Trim(), replacement);
+            return result + ".xml";
         }
     }
 }

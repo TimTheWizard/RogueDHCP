@@ -60,6 +60,14 @@ namespace RogueDHCP
         //calling object to an XML file. Creates or Overwrites file.
         public void Serialize(string file)
         {
+            if(Directory.Exists("settings"))
+            {
+                //do nothing
+            }
+            else
+            {
+                Directory.CreateDirectory("settings");
+            }
             using (var stream = new FileStream(file, FileMode.Create))
             {
                 XmlSerializer xml = new XmlSerializer(typeof(Settings));
