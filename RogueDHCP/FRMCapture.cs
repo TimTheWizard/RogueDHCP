@@ -566,7 +566,6 @@ namespace RogueDHCP
             {
                 MessageBox.Show(ex.StackTrace);
             }
-
         }
     }
 }

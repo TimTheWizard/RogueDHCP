@@ -39,8 +39,6 @@
             this.openToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.screenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.packetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aRPToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -54,6 +52,7 @@
             this.tabView = new System.Windows.Forms.TabControl();
             this.tabActive = new System.Windows.Forms.TabPage();
             this.tabSettings = new System.Windows.Forms.TabPage();
+            this.applyButton = new System.Windows.Forms.Button();
             this.textBoxLeaseTime = new System.Windows.Forms.TextBox();
             this.labelLease = new System.Windows.Forms.Label();
             this.labelDomainName = new System.Windows.Forms.Label();
@@ -67,7 +66,6 @@
             this.labelGateway = new System.Windows.Forms.Label();
             this.textGateway = new System.Windows.Forms.TextBox();
             this.labelNIC = new System.Windows.Forms.Label();
-            this.applyButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.tabView.SuspendLayout();
@@ -154,26 +152,10 @@
             // 
             // packetsToolStripMenuItem
             // 
-            this.packetsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pingToolStripMenuItem,
-            this.aRPToolStripMenuItem1});
             this.packetsToolStripMenuItem.Name = "packetsToolStripMenuItem";
             this.packetsToolStripMenuItem.Size = new System.Drawing.Size(103, 20);
             this.packetsToolStripMenuItem.Text = "Scan Network";
-            // 
-            // pingToolStripMenuItem
-            // 
-            this.pingToolStripMenuItem.Name = "pingToolStripMenuItem";
-            this.pingToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.pingToolStripMenuItem.Text = "Ping";
-            this.pingToolStripMenuItem.Click += new System.EventHandler(this.pingStripMenuItem_Click);
-            // 
-            // aRPToolStripMenuItem1
-            // 
-            this.aRPToolStripMenuItem1.Name = "aRPToolStripMenuItem1";
-            this.aRPToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
-            this.aRPToolStripMenuItem1.Text = "ARP";
-            this.aRPToolStripMenuItem1.Click += new System.EventHandler(this.aRPToolStripMenuItem_Click);
+            this.packetsToolStripMenuItem.Click += new System.EventHandler(this.aRPToolStripMenuItem_Click);
             // 
             // openFileDialog1
             // 
@@ -340,6 +322,16 @@
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
+            // applyButton
+            // 
+            this.applyButton.Location = new System.Drawing.Point(453, 173);
+            this.applyButton.Name = "applyButton";
+            this.applyButton.Size = new System.Drawing.Size(82, 28);
+            this.applyButton.TabIndex = 13;
+            this.applyButton.Text = "Apply";
+            this.applyButton.UseVisualStyleBackColor = true;
+            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
+            // 
             // textBoxLeaseTime
             // 
             this.textBoxLeaseTime.Location = new System.Drawing.Point(453, 84);
@@ -445,17 +437,6 @@
             this.labelNIC.Size = new System.Drawing.Size(28, 14);
             this.labelNIC.TabIndex = 0;
             this.labelNIC.Text = "NIC";
-
-            // 
-            // applyButton
-            // 
-            this.applyButton.Location = new System.Drawing.Point(453, 173);
-            this.applyButton.Name = "applyButton";
-            this.applyButton.Size = new System.Drawing.Size(82, 28);
-            this.applyButton.TabIndex = 13;
-            this.applyButton.Text = "Apply";
-            this.applyButton.UseVisualStyleBackColor = true;
-            this.applyButton.Click += new System.EventHandler(this.applyButton_Click);
             // 
             // FRMCapture
             // 
@@ -521,8 +502,6 @@
         private System.Windows.Forms.Label labelGateway;
         public System.Windows.Forms.TextBox textGateway;
         private System.Windows.Forms.Label labelNIC;
-        private System.Windows.Forms.ToolStripMenuItem pingToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aRPToolStripMenuItem1;
         private System.Windows.Forms.Button applyButton;
     }
 }

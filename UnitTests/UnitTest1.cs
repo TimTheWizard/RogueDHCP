@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using RogueDHCP;
-using PacketCapture;
 using System.Windows.Forms;
 
 namespace UnitTests
