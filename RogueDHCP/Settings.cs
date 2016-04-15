@@ -37,6 +37,34 @@ namespace RogueDHCP
             this.NICName = NICName;
             this.leaseTime = sec;
         }
+
+        public void AddDns(string newdns)
+        {
+            string[] temp = new string[dns.Length + 1];
+            for (int i = 0; i < dns.Length; i++)
+            {
+                temp[i] = dns[i];
+            }
+            temp[temp.Length] = newdns;
+            dns = temp;
+        }
+        
+        public string GetDNS1()
+        {
+            return dns[0];
+        }
+        public void setDNS1(string dnsItem)
+        {
+            dns[0] = dnsItem;
+        }
+        public string GetDNS2()
+        {
+            return dns[1];
+        }
+        public void setDNS2(string dnsItem)
+        {
+            dns[1] = dnsItem;
+        }
         public string[] GetDns()
         {
             List<string> dnsTemp = new List<string>();

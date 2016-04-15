@@ -45,11 +45,12 @@ namespace RogueDHCP
         {
             InitializeComponent();
             devices = CaptureDeviceList.Instance;
-            if (devices.Count < 1)
+            if (devices==null || devices.Count < 1)
             {
                 MessageBox.Show("Error, no Capture Devices Found");
                 Application.Exit();
             }
+            return;
             foreach (ICaptureDevice dev in devices)
             {
                 cmbDevices.Items.Add(dev.Description);
@@ -287,7 +288,7 @@ namespace RogueDHCP
                         Address = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.ipAddress != null && (x.Addr.ipAddress + "").Length <= 15);
                         localMAC = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.hardwareAddress != null).Addr.hardwareAddress;
                         localIp = Address.Addr.ipAddress.ToString();
-                        string file = getFileSafeName(device.Description);
+                        string file = getFileSafeNameWithDefaultPath(device.Description);
                         bool loadSettingsSuccess = Settings.TryLoad(file, out settings);
                         if (!loadSettingsSuccess)
                         {
@@ -386,25 +387,35 @@ namespace RogueDHCP
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            saveFileDialog1.FileName = "Text Files|*.txt|All Files|*.*";
+            saveFileDialog1.Filter = "XML Files | *.xml | All Files | *.*";
+            saveFileDialog1.FileName = getFileSafeName(settings.NICName.Length>0? settings.NICName: "Settings");
             saveFileDialog1.Title = "Save the Captured Packets";
             saveFileDialog1.ShowDialog();
 
             if(saveFileDialog1.FileName!="")
             {
-                //System.IO.File.WriteAllText(saveFileDialog1.FileName, txtCapturedData.Text);
+                string[] fileParts = saveFileDialog1.FileName.Split('\\');
+                settings.NICName = fileParts[fileParts.Length - 1].Replace(".xml","");
+                settings.Serialize(saveFileDialog1.FileName);
             }
         }
 
         private void openToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            openFileDialog1.FileName = "Text Files|*.txt|All Files|*.*";
+            openFileDialog1.Filter = "XML Files|*.xml|All Files|*.*";
             openFileDialog1.Title = "Open Previously Captured Packets";
             openFileDialog1.ShowDialog();
 
             if (openFileDialog1.FileName != "")
             {
-                //txtCapturedData.Text=System.IO.File.ReadAllText(openFileDialog1.FileName);
+                try
+                {
+                    settings = Settings.Deserialize(openFileDialog1.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Invalid or corrupted Settings file");
+                }
             }
         }
 
@@ -457,10 +468,6 @@ namespace RogueDHCP
             ARP(IPAddress.Parse(address));
             tcs.SetResult(address);
             return tcs.Task;
-        }
-        private void scanNetworkToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-                        
         }
         
         public void ARP(IPAddress ipAddress)
@@ -571,7 +578,7 @@ namespace RogueDHCP
         {
             try
             {
-                string path = getFileSafeName(settings.NICName);
+                string path = getFileSafeNameWithDefaultPath(settings.NICName);
                 settings.Serialize(path);
                 MessageBox.Show("Settings Saved");
             }
@@ -582,7 +589,7 @@ namespace RogueDHCP
             }
         }
 
-        private string getFileSafeName(string nICName)
+        private string getFileSafeNameWithDefaultPath(string nICName)
         {
       
             string pattern = "\\W";
@@ -590,6 +597,63 @@ namespace RogueDHCP
             Regex rgx = new Regex(pattern);
             string result = @"settings\"+rgx.Replace(nICName.Trim(), replacement);
             return result + ".xml";
+        }
+
+        private string getFileSafeName(string nICName)
+        {
+
+            string pattern = "\\W";
+            string replacement = "DT3";//random replacement
+            Regex rgx = new Regex(pattern);
+            return rgx.Replace(nICName.Trim(), replacement) + ".xml";
+        }
+
+        private void textGateway_TextChanged(object sender, EventArgs e)
+        {
+            if (IPTables.validIp(textGateway.Text))
+            {
+                settings.gateway = textGateway.Text;
+                string path = getFileSafeNameWithDefaultPath(settings.NICName);
+                settings.Serialize(path);
+            }
+        }
+
+        private void textBoxSubnet_TextChanged(object sender, EventArgs e)
+        {
+            if (IPTables.validIp(textBoxSubnet.Text))
+            {
+                settings.subnet = textBoxSubnet.Text;
+                string path = getFileSafeNameWithDefaultPath(settings.NICName);
+                settings.Serialize(path);
+            }
+        }
+
+        private void textBoxDomainName_TextChanged(object sender, EventArgs e)
+        {
+            settings.domainName = textBoxDomainName.Text;
+            string path = getFileSafeNameWithDefaultPath(settings.NICName);
+            settings.Serialize(path);
+        }
+
+        private void textBoxDNS1_TextChanged(object sender, EventArgs e)
+        {
+
+            if (IPTables.validIp(textBoxDNS1.Text))
+            {
+                settings.setDNS1(textBoxDNS1.Text);
+                string path = getFileSafeNameWithDefaultPath(settings.NICName);
+                settings.Serialize(path);
+            }
+        }
+
+        private void textBoxDNS2_TextChanged(object sender, EventArgs e)
+        {
+            if (IPTables.validIp(textBoxDNS2.Text))
+            {
+                settings.setDNS2(textBoxDNS2.Text);
+                string path = getFileSafeNameWithDefaultPath(settings.NICName);
+                settings.Serialize(path);
+            }
         }
     }
 }

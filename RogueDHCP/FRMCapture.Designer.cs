@@ -56,7 +56,7 @@
             this.textBoxLeaseTime = new System.Windows.Forms.TextBox();
             this.labelLease = new System.Windows.Forms.Label();
             this.labelDomainName = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBoxDomainName = new System.Windows.Forms.TextBox();
             this.textBoxDNS2 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.labelDns1 = new System.Windows.Forms.Label();
@@ -132,15 +132,15 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(102, 22);
-            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(165, 22);
+            this.saveToolStripMenuItem.Text = "Save Settings";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // openToolStripMenuItem1
             // 
             this.openToolStripMenuItem1.Name = "openToolStripMenuItem1";
-            this.openToolStripMenuItem1.Size = new System.Drawing.Size(102, 22);
-            this.openToolStripMenuItem1.Text = "Open";
+            this.openToolStripMenuItem1.Size = new System.Drawing.Size(165, 22);
+            this.openToolStripMenuItem1.Text = "Load Settings";
             this.openToolStripMenuItem1.Click += new System.EventHandler(this.openToolStripMenuItem1_Click);
             // 
             // screenToolStripMenuItem
@@ -304,7 +304,7 @@
             this.tabSettings.Controls.Add(this.textBoxLeaseTime);
             this.tabSettings.Controls.Add(this.labelLease);
             this.tabSettings.Controls.Add(this.labelDomainName);
-            this.tabSettings.Controls.Add(this.textBox4);
+            this.tabSettings.Controls.Add(this.textBoxDomainName);
             this.tabSettings.Controls.Add(this.textBoxDNS2);
             this.tabSettings.Controls.Add(this.label1);
             this.tabSettings.Controls.Add(this.labelDns1);
@@ -358,12 +358,13 @@
             this.labelDomainName.TabIndex = 10;
             this.labelDomainName.Text = "Domain Name";
             // 
-            // textBox4
+            // textBoxDomainName
             // 
-            this.textBox4.Location = new System.Drawing.Point(146, 84);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 20);
-            this.textBox4.TabIndex = 9;
+            this.textBoxDomainName.Location = new System.Drawing.Point(146, 84);
+            this.textBoxDomainName.Name = "textBoxDomainName";
+            this.textBoxDomainName.Size = new System.Drawing.Size(100, 20);
+            this.textBoxDomainName.TabIndex = 9;
+            this.textBoxDomainName.TextChanged += new System.EventHandler(this.textBoxDomainName_TextChanged);
             // 
             // textBoxDNS2
             // 
@@ -371,6 +372,7 @@
             this.textBoxDNS2.Name = "textBoxDNS2";
             this.textBoxDNS2.Size = new System.Drawing.Size(100, 20);
             this.textBoxDNS2.TabIndex = 8;
+            this.textBoxDNS2.TextChanged += new System.EventHandler(this.textBoxDNS2_TextChanged);
             // 
             // label1
             // 
@@ -396,6 +398,7 @@
             this.textBoxDNS1.Name = "textBoxDNS1";
             this.textBoxDNS1.Size = new System.Drawing.Size(100, 20);
             this.textBoxDNS1.TabIndex = 5;
+            this.textBoxDNS1.TextChanged += new System.EventHandler(this.textBoxDNS1_TextChanged);
             // 
             // textBoxSubnet
             // 
@@ -403,6 +406,7 @@
             this.textBoxSubnet.Name = "textBoxSubnet";
             this.textBoxSubnet.Size = new System.Drawing.Size(100, 20);
             this.textBoxSubnet.TabIndex = 4;
+            this.textBoxSubnet.TextChanged += new System.EventHandler(this.textBoxSubnet_TextChanged);
             // 
             // labelSubnet
             // 
@@ -428,6 +432,7 @@
             this.textGateway.Name = "textGateway";
             this.textGateway.Size = new System.Drawing.Size(100, 20);
             this.textGateway.TabIndex = 1;
+            this.textGateway.TextChanged += new System.EventHandler(this.textGateway_TextChanged);
             // 
             // labelNIC
             // 
@@ -492,7 +497,7 @@
         private System.Windows.Forms.TextBox textBoxLeaseTime;
         private System.Windows.Forms.Label labelLease;
         private System.Windows.Forms.Label labelDomainName;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBoxDomainName;
         private System.Windows.Forms.TextBox textBoxDNS2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelDns1;
