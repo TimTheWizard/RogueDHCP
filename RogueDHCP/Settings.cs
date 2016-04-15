@@ -56,6 +56,22 @@ namespace RogueDHCP
             }
             return dnsTemp.ToArray();
         }
+
+        public static bool TryLoad(string path, out Settings set)
+        {
+            try
+            {
+                set = Deserialize(path);
+                if (set != null)
+                {
+                    return true;
+                }
+            }
+            catch (Exception ex) { }
+            set = new Settings();
+            return false;
+        }
+
         // Takes a the path of a file as a String and then writes the 
         //calling object to an XML file. Creates or Overwrites file.
         public void Serialize(string file)

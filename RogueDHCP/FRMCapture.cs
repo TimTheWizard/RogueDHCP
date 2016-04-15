@@ -287,27 +287,31 @@ namespace RogueDHCP
                         Address = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.ipAddress != null && (x.Addr.ipAddress + "").Length <= 15);
                         localMAC = ((WinPcapDevice)device).Addresses.FirstOrDefault(x => x.Addr.hardwareAddress != null).Addr.hardwareAddress;
                         localIp = Address.Addr.ipAddress.ToString();
-
-                        //load settings
-                        settings.NICName = device.Description;
-                        settings.subnet = Address.Netmask.ToString();
-                        var devices = NetworkInterface.GetAllNetworkInterfaces();
-                        foreach (var nic in devices)
+                        string file = getFileSafeName(device.Description);
+                        bool loadSettingsSuccess = Settings.TryLoad(file, out settings);
+                        if (!loadSettingsSuccess)
                         {
-                            if (settings.gateway == "0.0.0.0")
-                            foreach (var addressProperties in nic.GetIPProperties().UnicastAddresses)
+                            //load settings default
+                            settings.NICName = device.Description;
+                            settings.subnet = Address.Netmask.ToString();
+                            var devices = NetworkInterface.GetAllNetworkInterfaces();
+                            foreach (var nic in devices)
                             {
-                                if (addressProperties.Address.ToString() == localIp)
-                                {
-                                    settings.gateway = nic.GetIPProperties().GatewayAddresses.First().Address.ToString();
-                                    break;
-                                }
+                                if (settings.gateway == "0.0.0.0")
+                                    foreach (var addressProperties in nic.GetIPProperties().UnicastAddresses)
+                                    {
+                                        if (addressProperties.Address.ToString() == localIp)
+                                        {
+                                            settings.gateway = nic.GetIPProperties().GatewayAddresses.First().Address.ToString();
+                                            break;
+                                        }
+                                    }
                             }
+                            if (settings.gateway == "0.0.0.0")
+                                MessageBox.Show("Error extracting Gateway Address");
+                            //save settings
+                            settings.Serialize(file);
                         }
-                        if (settings.gateway == "0.0.0.0")
-                            MessageBox.Show("Error extracting Gateway Address");
-
-
                         var name =device.Description;
                         device.StartCapture();
                         timer1.Enabled = true;
