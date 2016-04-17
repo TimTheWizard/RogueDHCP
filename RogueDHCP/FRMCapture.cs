@@ -50,7 +50,6 @@ namespace RogueDHCP
                 MessageBox.Show("Error, no Capture Devices Found");
                 Application.Exit();
             }
-            return;
             foreach (ICaptureDevice dev in devices)
             {
                 cmbDevices.Items.Add(dev.Description);
