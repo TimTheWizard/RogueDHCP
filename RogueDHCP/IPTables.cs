@@ -39,6 +39,11 @@ namespace RogueDHCP
                 //if so, move it over to the inuse list
                 if (_AvailableIps.Remove(ip))
                 {
+                    while(ipList.Any(x=>x.Item2==mac))
+                    {
+                        int index=ipList.FindIndex(x => x.Item2 == mac);
+                        releaseIp(ipList[index].Item1);
+                    }
                     ipList.Add(new Tuple<string, string, DateTime>(ip, mac, kill));
                     _updated = true;
                     return true;
@@ -100,7 +105,7 @@ namespace RogueDHCP
         public static bool validIp(string ip)
         {
             var ipParts = ip.Split('.');
-            if (ipParts.Length == 4)
+            if (ipParts.Length == 4 && ipParts[3].Trim()!="")
             {
                 foreach (var part in ipParts)
                 {
