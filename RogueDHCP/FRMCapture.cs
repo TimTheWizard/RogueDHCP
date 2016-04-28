@@ -156,7 +156,7 @@ namespace RogueDHCP
                                         string requestedIp;
                                         if (dhcp.TryGetOption("32", out requestedIp) && !ipLists.isAvailable(ConvertHexIpToStandard(requestedIp)))
                                         {
-                                            device.SendPacket(dhcp.DHCPOffer(ConvertIpToHex(requestedIp), settings.GetDnsHex()).GetPacket());
+                                            device.SendPacket(dhcp.DHCPOffer(requestedIp, settings.GetDnsHex()).GetPacket());
                                         }
                                         else
                                         {
